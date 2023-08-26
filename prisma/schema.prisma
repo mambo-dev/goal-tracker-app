@@ -6,7 +6,57 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
-  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  provider = "postgresql"
+  url      = env("POSTGRES_PRISMA_URL") // uses connection pooling
+}
+
+model User {
+  user_id       Int      @id @default(autoincrement())
+  user_username String   @unique
+  user_email    String   @unique
+  user_password String
+  user_account  Account?
+  user_goals    Goal[]
+}
+
+model Account {
+  account_id              Int     @id @default(autoincrement())
+  account_user            User    @relation(fields: [account_user_id], references: [user_id], onDelete: Cascade)
+  account_user_id         Int     @unique
+  account_verified        Boolean
+  account_verified_code   String  @default(uuid())
+  account_two_factor      Boolean
+  account_two_factor_code String  @default(uuid())
+}
+
+model Goal {
+  goal_id            Int       @id @default(autoincrement())
+  goal_user          User      @relation(fields: [goal_user_id], references: [user_id], onDelete: Cascade)
+  goal_user_id       Int
+  goal_title         String
+  goal_user_timeline DateTime
+  goal_type_timeline DateTime
+  goal_achieved      Boolean
+  goal_type          Type
+  goal_subgoals      SubGoal[]
+}
+
+enum Type {
+  daily
+  weekly
+  monthly
+  yearly
+}
+
+model SubGoal {
+  subgoal_id            Int       @id @default(autoincrement())
+  subgoal_goal          Goal      @relation(fields: [subgoal_goal_id], references: [goal_id], onDelete: Cascade)
+  subgoal_goal_id       Int
+  subgoal_title         String
+  subgoal_user_timeline DateTime
+  subgoal_type_timeline DateTime
+  subgoal_achieved      Boolean
+  subgoal_subgoal       SubGoal?  @relation("SubGoalSubgoals", fields: [subgoal_subgoal_id], references: [subgoal_id])
+  subgoal_subgoal_id    Int?
+  subgoal_subgoals      SubGoal[] @relation("SubGoalSubgoals")
 }
