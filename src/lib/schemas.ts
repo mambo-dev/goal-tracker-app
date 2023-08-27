@@ -17,6 +17,12 @@ export const signUpSchema = z
     path: ["confirmPassword"],
   });
 
+export const signInSchema = z.object({
+  username: z.string().min(1, "please provide a username"),
+
+  password: z.string().min(1, "please provide a password"),
+});
+
 export const requestResetSchema = z.object({
   email: z
     .string()

@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import jwt from "jsonwebtoken";
 import cookie from "cookie";
-import { signUpSchema } from "@/lib/schemas";
+import { signInSchema } from "@/lib/schemas";
 import * as argon2 from "argon2";
 import { db } from "@/lib/prisma";
 import sendEmail from "@/lib/sendemail";
@@ -16,7 +16,7 @@ export async function POST(
   try {
     const body = await request.json();
 
-    const { username, password } = signUpSchema.parse(body);
+    const { username, password } = signInSchema.parse(body);
 
     const findUser = await db.user.findUnique({
       where: {
