@@ -5,6 +5,9 @@ import verifyAuth from "@/lib/auth";
 import { db } from "@/lib/prisma";
 import { z } from "zod";
 import { twoFactorSchema } from "@/lib/schemas";
+import jwt from "jsonwebtoken";
+import { getJwtSecret } from "@/lib/utils";
+import cookie from "cookie";
 
 // enable two factor
 export async function GET(
@@ -169,12 +172,28 @@ export async function POST(
       },
     });
 
+    const access_token = jwt.sign(
+      {
+        id: findUser.user_id,
+      },
+      getJwtSecret()
+    );
+
     return NextResponse.json(
       {
         data: true,
         okay: true,
       },
       {
+        headers: {
+          "Set-Cookie": cookie.serialize("access_token", access_token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV !== "development",
+            maxAge: 60 * 120,
+            sameSite: "strict",
+            path: "/",
+          }),
+        },
         status: 200,
       }
     );

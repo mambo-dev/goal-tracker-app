@@ -106,6 +106,15 @@ export async function POST(
           okay: true,
         },
         {
+          headers: {
+            "Set-Cookie": cookie.serialize("access_token", "", {
+              httpOnly: true,
+              secure: process.env.NODE_ENV !== "development",
+              maxAge: 60 * 120,
+              sameSite: "strict",
+              path: "/",
+            }),
+          },
           status: 200,
         }
       );
