@@ -21,13 +21,14 @@ model User {
 }
 
 model Account {
-  account_id              Int     @id @default(autoincrement())
-  account_user            User    @relation(fields: [account_user_id], references: [user_id], onDelete: Cascade)
-  account_user_id         Int     @unique
-  account_verified        Boolean
-  account_verified_code   String  @default(uuid())
-  account_two_factor      Boolean
-  account_two_factor_code String  @default(uuid())
+  account_id                  Int     @id @default(autoincrement())
+  account_user                User    @relation(fields: [account_user_id], references: [user_id], onDelete: Cascade)
+  account_user_id             Int     @unique
+  account_verified            Boolean @default(false)
+  account_verified_code       String  @default(uuid())
+  account_two_factor          Boolean @default(false)
+  account_two_factor_code     String  @default(uuid())
+  account_reset_password_code String  @default(uuid())
 }
 
 model Goal {

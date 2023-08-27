@@ -6,6 +6,8 @@ import cookie from "cookie";
 import { signUpSchema } from "@/lib/schemas";
 import * as argon2 from "argon2";
 import { db } from "@/lib/prisma";
+import sendEmail from "@/lib/sendemail";
+import { welcomeHtml } from "@/lib/emailhtmls";
 
 export async function POST(
   request: Request
@@ -23,6 +25,26 @@ export async function POST(
         user_email: email,
         user_password: hash,
       },
+    });
+
+    const userAccount = await db.account.create({
+      data: {
+        account_user: {
+          connect: {
+            user_id: newUser.user_id,
+          },
+        },
+      },
+    });
+
+    await sendEmail({
+      to: newUser.user_email,
+      from: "mambo.michael.22@gmail.com",
+      subject: "Welcome to Goalee",
+      html: welcomeHtml(
+        `We love to see you here use this code to verify your account ${userAccount.account_verified_code}`,
+        "link"
+      ),
     });
 
     if (!process.env.JWT_SECRET) {
