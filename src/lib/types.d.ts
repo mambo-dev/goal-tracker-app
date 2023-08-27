@@ -7,3 +7,17 @@ export type ServerResponse<T> = {
 type HandleError = {
   message: string;
 };
+
+export type AuthorizedUser = {
+  user?: {
+    user_id: number;
+    username: string;
+  };
+  error?: string;
+};
+
+export type DecodedToken = {
+  id: number;
+  iat: number;
+  exp: number;
+};
