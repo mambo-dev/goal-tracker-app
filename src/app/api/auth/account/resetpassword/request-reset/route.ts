@@ -50,7 +50,7 @@ export async function POST(
       subject: "Password Reset Code",
       html: resetPasswordHtml(
         `Hi, we received a request to change your password if this isn't you, you can safely ignore this email otherwise
-        you reset password is  ${userAccount.account_reset_password_code}`,
+        you reset password is  <strong>${userAccount.account_reset_password_code}</strong>`,
         "link"
       ),
     });
