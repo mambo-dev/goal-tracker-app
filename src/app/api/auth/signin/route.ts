@@ -13,17 +13,50 @@ export async function POST(
   try {
     const body = await request.json();
 
-    const { email, password, username } = signUpSchema.parse(body);
+    const { username, password } = signUpSchema.parse(body);
 
-    const hash = await argon2.hash(password);
-
-    const newUser = await db.user.create({
-      data: {
+    const findUser = await db.user.findUnique({
+      where: {
         user_username: username,
-        user_email: email,
-        user_password: hash,
       },
     });
+
+    if (!findUser) {
+      return NextResponse.json(
+        {
+          message: [
+            {
+              message: "could not find user try signing up first",
+            },
+          ],
+          okay: false,
+        },
+        {
+          status: 404,
+        }
+      );
+    }
+
+    const verifyPassword = await argon2.verify(
+      findUser.user_password,
+      password
+    );
+
+    if (!verifyPassword) {
+      return NextResponse.json(
+        {
+          message: [
+            {
+              message: "invalid password or username",
+            },
+          ],
+          okay: false,
+        },
+        {
+          status: 403,
+        }
+      );
+    }
 
     if (!process.env.JWT_SECRET) {
       throw new Error("jwt secret is not defined");
@@ -31,7 +64,7 @@ export async function POST(
 
     const access_token = jwt.sign(
       {
-        id: newUser.user_id,
+        id: findUser.user_id,
       },
       process.env.JWT_SECRET
     );
