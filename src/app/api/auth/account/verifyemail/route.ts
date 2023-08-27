@@ -1,21 +1,53 @@
 import { ServerResponse } from "@/lib/types";
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import verifyAuth from "@/lib/auth";
+import { db } from "@/lib/prisma";
 
 export async function GET(
   request: Request
 ): Promise<NextResponse<ServerResponse<boolean>>> {
   try {
     const { searchParams } = new URL(request.url);
-
     const verificationCode = searchParams.get("verificationCode");
-
+    const cookie = cookies();
     if (!verificationCode) {
       throw new Error("invalid code value sent");
     }
 
+    const access_token = cookie.get("access_token");
+    if (!cookie) {
+      return NextResponse.json(
+        {
+          error: [
+            {
+              message: "could not retrive cookies",
+            },
+          ],
+          okay: false,
+        },
+        { status: 400 }
+      );
+    }
+    const { user, error } = await verifyAuth(access_token?.value);
+
+    if (error || !user) {
+      return NextResponse.json(
+        {
+          error: [
+            {
+              message: error,
+            },
+          ],
+          okay: false,
+        },
+        { status: 403 }
+      );
+    }
+
     const findUser = await db.user.findUnique({
       where: {
-        user_email: email,
+        user_id: user.user_id,
       },
       include: {
         user_account: true,
@@ -38,12 +70,12 @@ export async function GET(
       );
     }
 
-    if (findUser.user_account.account_reset_password_code !== resetCode) {
+    if (findUser.user_account.account_verified_code !== verificationCode) {
       return NextResponse.json(
         {
           message: [
             {
-              message: "the reset code did not match please try again",
+              message: "the verification code did not match please try again",
             },
           ],
           okay: false,
@@ -53,13 +85,13 @@ export async function GET(
         }
       );
     }
-    const hash = await argon2.hash(password);
-    await db.user.update({
+
+    await db.account.update({
       where: {
-        user_email: email,
+        account_user_id: findUser.user_id,
       },
       data: {
-        user_password: hash,
+        account_verified: true,
       },
     });
 
@@ -73,18 +105,6 @@ export async function GET(
       }
     );
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        {
-          error: error.issues,
-          okay: false,
-        },
-        {
-          status: 403,
-        }
-      );
-    }
-
     return NextResponse.json(
       {
         error: [
