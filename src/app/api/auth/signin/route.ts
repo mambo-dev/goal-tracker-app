@@ -6,6 +6,9 @@ import cookie from "cookie";
 import { signUpSchema } from "@/lib/schemas";
 import * as argon2 from "argon2";
 import { db } from "@/lib/prisma";
+import sendEmail from "@/lib/sendemail";
+import { twoFactorAuthenticationHtml } from "@/lib/emailhtmls";
+import { uuid } from "uuidv4";
 
 export async function POST(
   request: Request
@@ -18,6 +21,15 @@ export async function POST(
     const findUser = await db.user.findUnique({
       where: {
         user_username: username,
+      },
+      include: {
+        user_account: {
+          select: {
+            account_two_factor: true,
+            account_user: false,
+            account_two_factor_code: true,
+          },
+        },
       },
     });
 
@@ -68,6 +80,36 @@ export async function POST(
       },
       process.env.JWT_SECRET
     );
+
+    if (findUser.user_account?.account_two_factor) {
+      const account = await db.account.update({
+        where: {
+          account_user_id: findUser.user_id,
+        },
+        data: {
+          account_two_factor_code: uuid(),
+        },
+      });
+
+      await sendEmail({
+        to: findUser.user_email,
+        from: "mambo.michael.22@gmail.com",
+        subject: "Two factor Authentication",
+        html: twoFactorAuthenticationHtml(
+          `Kindly use this code to access your account ${account.account_two_factor_code}`,
+          "link"
+        ),
+      });
+      return NextResponse.json(
+        {
+          data: true,
+          okay: true,
+        },
+        {
+          status: 200,
+        }
+      );
+    }
 
     return NextResponse.json(
       {

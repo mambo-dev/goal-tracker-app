@@ -24,6 +24,12 @@ export const requestResetSchema = z.object({
     .email("provide a valid email"),
 });
 
+export const twoFactorSchema = z.object({
+  twoFactorCode: z
+    .string()
+    .min(1, "please provide the code sent in your email"),
+});
+
 export const updatePasswordSchema = z
   .object({
     password: z.string().min(1, "please provide a password"),
