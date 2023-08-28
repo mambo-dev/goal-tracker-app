@@ -52,8 +52,10 @@ export async function PUT(
       );
     }
 
-    let { goalTitle, goalUserTimeline } = editGoalSchema.parse(body);
-
+    let { goalTitle, goalUserTimeline } = editGoalSchema.parse({
+      ...body,
+      goalUserTimeline: new Date(body.goalUserTimeline),
+    });
     let goalTypeTimeline: Date = assignTimeline(findGoal.goal_type);
 
     if (goalUserTimeline > goalTypeTimeline) {

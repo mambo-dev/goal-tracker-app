@@ -27,8 +27,10 @@ export async function POST(
       );
     }
 
-    let { goalTitle, goalType, goalUserTimeline } =
-      createGoalSchema.parse(body);
+    let { goalTitle, goalType, goalUserTimeline } = createGoalSchema.parse({
+      ...body,
+      goalUserTimeline: new Date(body.goalUserTimeline),
+    });
 
     let goalTypeTimeline: Date = assignTimeline(goalType);
 
@@ -73,6 +75,7 @@ export async function POST(
       }
     );
   } catch (error) {
+    console.log(error);
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
