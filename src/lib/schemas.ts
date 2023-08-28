@@ -58,11 +58,14 @@ export const createGoalSchema = z.object({
   goalUserTimeline: z.date({
     required_error: "a date timeline is required",
   }),
-  goalTypeTimeline: z
-    .date({
-      invalid_type_error: "provide type of date",
-    })
-    .default(new Date()),
-  goalAchieved: z.boolean().default(false),
   goalType: z.enum(["daily", "weekly", "monthly", "yearly"]),
+});
+
+export const editGoalSchema = z.object({
+  goalTitle: z.string(),
+  goalUserTimeline: z.date(),
+  goalType: z.enum(["daily", "weekly", "monthly", "yearly"]),
+  goalAchieved: z.boolean({
+    required_error: "please provide a value for this",
+  }),
 });

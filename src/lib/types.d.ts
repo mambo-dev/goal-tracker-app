@@ -25,7 +25,6 @@ export type DecodedToken = {
 };
 
 export type UserExistsAndAuthorized = {
-  okay: boolean;
   message?: string;
-  user?: User;
+  user: User | null;
 };

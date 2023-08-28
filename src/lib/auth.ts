@@ -61,7 +61,7 @@ export async function userExistsAndAuthorized(): Promise<UserExistsAndAuthorized
 
   if (!cookie) {
     return {
-      okay: false,
+      user: null,
       message: "sorry try signing in again",
     };
   }
@@ -70,7 +70,7 @@ export async function userExistsAndAuthorized(): Promise<UserExistsAndAuthorized
 
   if (error || !user) {
     return {
-      okay: false,
+      user: null,
       message: error,
     };
   }
@@ -83,13 +83,12 @@ export async function userExistsAndAuthorized(): Promise<UserExistsAndAuthorized
 
   if (!findUser) {
     return {
-      okay: false,
+      user: null,
       message: "could not find user try signing up first",
     };
   }
 
   return {
-    okay: true,
     user: findUser,
   };
 }

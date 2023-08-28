@@ -1,18 +1,18 @@
 import { userExistsAndAuthorized } from "@/lib/auth";
 import { db } from "@/lib/prisma";
-import { createGoalSchema } from "@/lib/schemas";
+import { createGoalSchema, editGoalSchema } from "@/lib/schemas";
 import { ServerResponse } from "@/lib/types";
-import { addDays, addMonths, addWeeks, addYears } from "date-fns";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { assignTimeline } from "../validatetype";
+import { getIdFromParams } from "@/lib/utils";
 
-export async function POST(
+export async function PUT(
   request: Request
 ): Promise<NextResponse<ServerResponse<boolean>>> {
   try {
     const body = await request.json();
-
+    const goalId = getIdFromParams("goalId", request.url);
     const { user, message } = await userExistsAndAuthorized();
 
     if (!user) {
@@ -27,8 +27,8 @@ export async function POST(
       );
     }
 
-    let { goalTitle, goalType, goalUserTimeline } =
-      createGoalSchema.parse(body);
+    let { goalTitle, goalAchieved, goalType, goalUserTimeline } =
+      editGoalSchema.parse(body);
 
     let goalTypeTimeline: Date = assignTimeline(goalType);
 
@@ -48,7 +48,10 @@ export async function POST(
       );
     }
 
-    await db.goal.create({
+    await db.goal.update({
+      where: {
+        goal_id: goalId,
+      },
       data: {
         goal_title: goalTitle,
         goal_achieved: false,

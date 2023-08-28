@@ -1,17 +1,19 @@
 import { userExistsAndAuthorized } from "@/lib/auth";
 import { db } from "@/lib/prisma";
-import { createGoalSchema } from "@/lib/schemas";
+import { createGoalSchema, editGoalSchema } from "@/lib/schemas";
 import { ServerResponse } from "@/lib/types";
-import { addDays, addMonths, addWeeks, addYears } from "date-fns";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { assignTimeline } from "../validatetype";
+import { getIdFromParams } from "@/lib/utils";
 
-export async function POST(
+export async function DELETE(
   request: Request
 ): Promise<NextResponse<ServerResponse<boolean>>> {
   try {
     const body = await request.json();
+
+    const goalId = getIdFromParams("goalId", request.url);
 
     const { user, message } = await userExistsAndAuthorized();
 
@@ -27,8 +29,8 @@ export async function POST(
       );
     }
 
-    let { goalTitle, goalType, goalUserTimeline } =
-      createGoalSchema.parse(body);
+    let { goalTitle, goalAchieved, goalType, goalUserTimeline } =
+      editGoalSchema.parse(body);
 
     let goalTypeTimeline: Date = assignTimeline(goalType);
 
@@ -48,16 +50,9 @@ export async function POST(
       );
     }
 
-    await db.goal.create({
-      data: {
-        goal_title: goalTitle,
-        goal_achieved: false,
-        goal_type: goalType,
-        goal_type_timeline: goalTypeTimeline,
-        goal_user_timeline: goalUserTimeline,
-        goal_user: {
-          connect: user.user_id,
-        },
+    await db.goal.delete({
+      where: {
+        goal_id: Number(goalId),
       },
     });
 
