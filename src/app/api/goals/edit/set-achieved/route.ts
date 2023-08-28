@@ -4,12 +4,12 @@ import { ServerResponse } from "@/lib/types";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getIdFromParams } from "@/lib/utils";
+import { Goal } from "@prisma/client";
 
 export async function PUT(
   request: Request
 ): Promise<NextResponse<ServerResponse<boolean>>> {
   try {
-    const body = await request.json();
     const goalId = getIdFromParams("goalId", request.url);
     const { user, message } = await userExistsAndAuthorized();
 
@@ -50,8 +50,8 @@ export async function PUT(
       );
     }
 
-    if (!findGoal.goal_subgoals && findGoal.goal_subgoals.length <= 0) {
-      await db.goal.update({
+    if (!findGoal.goal_subgoals || findGoal.goal_subgoals.length <= 0) {
+      const updatedgoal = await db.goal.update({
         where: {
           goal_id: findGoal.goal_id,
         },
@@ -59,6 +59,8 @@ export async function PUT(
           goal_achieved: true,
         },
       });
+
+      await updateOrCreateStreak(updatedgoal);
 
       return NextResponse.json(
         {
@@ -106,5 +108,47 @@ export async function PUT(
         status: 500,
       }
     );
+  }
+}
+
+async function updateOrCreateStreak(goal: Goal): Promise<boolean> {
+  try {
+    const goalHasStreak = await db.streak.findUnique({
+      where: {
+        streak_goal_id: goal.goal_id,
+      },
+    });
+
+    if (goalHasStreak) {
+      await db.streak.update({
+        where: {
+          streak_id: goalHasStreak.streak_id,
+        },
+        data: {
+          streak_current_count: (goalHasStreak.streak_current_count += 1),
+        },
+      });
+    } else {
+      await db.streak.create({
+        data: {
+          streak_starttime: new Date(),
+          streak_type: goal.goal_type,
+          streak_current_count: 1,
+          streak_goal: {
+            connect: {
+              goal_id: goal.goal_id,
+            },
+          },
+          streak_user: {
+            connect: {
+              user_id: goal.goal_user_id,
+            },
+          },
+        },
+      });
+    }
+    return true;
+  } catch (error) {
+    throw new Error("error updating streak");
   }
 }

@@ -65,13 +65,13 @@ model SubGoal {
 }
 
 model Streak {
-  streak_id            Int      @id @default(autoincrement())
-  streak_current_count Int      @default(0)
+  streak_id            Int       @id @default(autoincrement())
+  streak_current_count Int       @default(0)
   streak_type          Type
   streak_starttime     DateTime
-  streak_endtime       DateTime
-  streak_user          User     @relation(fields: [streak_user_id], references: [user_id], onDelete: Cascade)
+  streak_endtime       DateTime?
+  streak_user          User      @relation(fields: [streak_user_id], references: [user_id], onDelete: Cascade)
   streak_user_id       Int
-  streak_goal          Goal     @relation(fields: [streak_goal_id], references: [goal_id], onDelete: Cascade)
-  streak_goal_id       Int      @unique
+  streak_goal          Goal      @relation(fields: [streak_goal_id], references: [goal_id], onDelete: Cascade)
+  streak_goal_id       Int       @unique
 }
