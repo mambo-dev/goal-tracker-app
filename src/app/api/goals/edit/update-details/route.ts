@@ -27,16 +27,41 @@ export async function PUT(
       );
     }
 
-    let { goalTitle, goalType, goalUserTimeline } = editGoalSchema.parse(body);
+    const findGoal = await db.goal.findUnique({
+      where: {
+        goal_id: goalId,
+      },
+      include: {
+        goal_subgoals: true,
+      },
+    });
 
-    let goalTypeTimeline: Date = assignTimeline(goalType);
+    if (!findGoal) {
+      return NextResponse.json(
+        {
+          error: [
+            {
+              message: "Oops this goal may have been  deleted",
+            },
+          ],
+          okay: false,
+        },
+        {
+          status: 403,
+        }
+      );
+    }
+
+    let { goalTitle, goalUserTimeline } = editGoalSchema.parse(body);
+
+    let goalTypeTimeline: Date = assignTimeline(findGoal.goal_type);
 
     if (goalUserTimeline > goalTypeTimeline) {
       return NextResponse.json(
         {
           error: [
             {
-              message: `sorry cannot update that timeline under ${goalType} plan`,
+              message: `sorry cannot update that timeline under ${findGoal.goal_type} plan`,
             },
           ],
           okay: false,
@@ -54,7 +79,6 @@ export async function PUT(
       data: {
         goal_title: goalTitle,
         goal_achieved: false,
-        goal_type: goalType,
         goal_type_timeline: goalTypeTimeline,
         goal_user_timeline: goalUserTimeline,
         goal_user: {
