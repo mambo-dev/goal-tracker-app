@@ -41,6 +41,7 @@ model Goal {
   goal_achieved      Boolean
   goal_type          Type
   goal_subgoals      SubGoal[]
+  goal_streak        Streak[]
 }
 
 enum Type {
@@ -71,4 +72,6 @@ model Streak {
   streak_endtime       DateTime
   streak_user          User     @relation(fields: [streak_user_id], references: [user_id], onDelete: Cascade)
   streak_user_id       Int
+  streak_goal          Goal     @relation(fields: [streak_goal_id], references: [goal_id], onDelete: Cascade)
+  streak_goal_id       Int
 }

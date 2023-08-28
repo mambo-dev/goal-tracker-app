@@ -65,7 +65,4 @@ export const editGoalSchema = z.object({
   goalTitle: z.string(),
   goalUserTimeline: z.date(),
   goalType: z.enum(["daily", "weekly", "monthly", "yearly"]),
-  goalAchieved: z.boolean({
-    required_error: "please provide a value for this",
-  }),
 });

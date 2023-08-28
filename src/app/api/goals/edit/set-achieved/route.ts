@@ -1,10 +1,8 @@
 import { userExistsAndAuthorized } from "@/lib/auth";
 import { db } from "@/lib/prisma";
-import { createGoalSchema, editGoalSchema } from "@/lib/schemas";
 import { ServerResponse } from "@/lib/types";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { assignTimeline } from "../validatetype";
 import { getIdFromParams } from "@/lib/utils";
 
 export async function PUT(
@@ -27,17 +25,21 @@ export async function PUT(
       );
     }
 
-    let { goalTitle, goalAchieved, goalType, goalUserTimeline } =
-      editGoalSchema.parse(body);
+    const findGoal = await db.goal.findUnique({
+      where: {
+        goal_id: goalId,
+      },
+      include: {
+        goal_subgoals: true,
+      },
+    });
 
-    let goalTypeTimeline: Date = assignTimeline(goalType);
-
-    if (goalUserTimeline > goalTypeTimeline) {
+    if (!findGoal) {
       return NextResponse.json(
         {
           error: [
             {
-              message: `sorry cannot create that timeline under ${goalType} plan`,
+              message: "Oops this goal may have been  deleted",
             },
           ],
           okay: false,
@@ -48,21 +50,26 @@ export async function PUT(
       );
     }
 
-    await db.goal.update({
-      where: {
-        goal_id: goalId,
-      },
-      data: {
-        goal_title: goalTitle,
-        goal_achieved: false,
-        goal_type: goalType,
-        goal_type_timeline: goalTypeTimeline,
-        goal_user_timeline: goalUserTimeline,
-        goal_user: {
-          connect: user.user_id,
+    if (!findGoal.goal_subgoals && findGoal.goal_subgoals.length <= 0) {
+      await db.goal.update({
+        where: {
+          goal_id: findGoal.goal_id,
         },
-      },
-    });
+        data: {
+          goal_achieved: true,
+        },
+      });
+
+      return NextResponse.json(
+        {
+          data: true,
+          okay: true,
+        },
+        {
+          status: 200,
+        }
+      );
+    }
 
     return NextResponse.json(
       {
