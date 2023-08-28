@@ -58,7 +58,9 @@ export async function PUT(
         goal_type_timeline: goalTypeTimeline,
         goal_user_timeline: goalUserTimeline,
         goal_user: {
-          connect: user.user_id,
+          connect: {
+            user_id: user.user_id,
+          },
         },
       },
     });
