@@ -73,6 +73,28 @@ export async function PUT(
       );
     }
 
+    const allSubGoalsAchieved = await findGoal.goal_subgoals.every(
+      (subgoal) => {
+        return subgoal.subgoal_achieved;
+      }
+    );
+
+    if (!allSubGoalsAchieved) {
+      return NextResponse.json(
+        {
+          error: [
+            {
+              message:
+                "Oops sorry you  need to achieve all sub goals under this goal to mark it as achieved",
+            },
+          ],
+          okay: false,
+        },
+        {
+          status: 403,
+        }
+      );
+    }
     return NextResponse.json(
       {
         data: true,
