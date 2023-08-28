@@ -49,16 +49,39 @@ export async function PUT(
         }
       );
     }
-    const updatedgoal = await db.goal.update({
-      where: {
-        goal_id: findGoal.goal_id,
-      },
-      data: {
-        goal_achieved: true,
-      },
-    });
 
+    //check whether its past the time of achievement then its too late and we end streak
+    const currentTime = new Date();
+    if (findGoal.goal_type_timeline > currentTime) {
+      const goalHasStreak = await db.streak.findUnique({
+        where: {
+          streak_goal_id: findGoal.goal_id,
+        },
+      });
+
+      if (goalHasStreak) {
+        await db.streak.update({
+          where: {
+            streak_goal_id: findGoal.goal_id,
+          },
+          data: {
+            streak_endtime: currentTime,
+          },
+        });
+      }
+    }
+
+    //if no subgoals just update the goal
     if (!findGoal.goal_subgoals || findGoal.goal_subgoals.length <= 0) {
+      const updatedgoal = await db.goal.update({
+        where: {
+          goal_id: findGoal.goal_id,
+        },
+        data: {
+          goal_achieved: true,
+        },
+      });
+
       await updateOrCreateStreak(updatedgoal);
 
       return NextResponse.json(
@@ -95,7 +118,7 @@ export async function PUT(
       );
     }
 
-    await updateOrCreateStreak(updatedgoal);
+    await updateOrCreateStreak(await updateGoal(findGoal.goal_id));
 
     return NextResponse.json(
       {
@@ -143,7 +166,7 @@ async function updateOrCreateStreak(goal: Goal): Promise<boolean> {
       },
     });
 
-    if (goalHasStreak) {
+    if (goalHasStreak && !goalHasStreak.streak_endtime) {
       await db.streak.update({
         where: {
           streak_id: goalHasStreak.streak_id,
@@ -175,4 +198,16 @@ async function updateOrCreateStreak(goal: Goal): Promise<boolean> {
   } catch (error) {
     throw new Error("error updating streak");
   }
+}
+
+async function updateGoal(goalId: number) {
+  const updatedgoal = await db.goal.update({
+    where: {
+      goal_id: goalId,
+    },
+    data: {
+      goal_achieved: true,
+    },
+  });
+  return updatedgoal;
 }
