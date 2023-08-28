@@ -49,17 +49,16 @@ export async function PUT(
         }
       );
     }
+    const updatedgoal = await db.goal.update({
+      where: {
+        goal_id: findGoal.goal_id,
+      },
+      data: {
+        goal_achieved: true,
+      },
+    });
 
     if (!findGoal.goal_subgoals || findGoal.goal_subgoals.length <= 0) {
-      const updatedgoal = await db.goal.update({
-        where: {
-          goal_id: findGoal.goal_id,
-        },
-        data: {
-          goal_achieved: true,
-        },
-      });
-
       await updateOrCreateStreak(updatedgoal);
 
       return NextResponse.json(
@@ -95,6 +94,9 @@ export async function PUT(
         }
       );
     }
+
+    await updateOrCreateStreak(updatedgoal);
+
     return NextResponse.json(
       {
         data: true,
