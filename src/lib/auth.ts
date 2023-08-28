@@ -2,7 +2,8 @@ import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
 import jwt from "jsonwebtoken";
 import { db } from "./prisma";
-import { AuthorizedUser, DecodedToken } from "./types";
+import { AuthorizedUser, DecodedToken, UserExistsAndAuthorized } from "./types";
+import { cookies } from "next/headers";
 
 export default async function verifyAuth(
   authorizationString: string | undefined
@@ -51,4 +52,44 @@ export default async function verifyAuth(
   } catch (error: any) {
     throw new Error(error.message);
   }
+}
+
+export async function userExistsAndAuthorized(): Promise<UserExistsAndAuthorized> {
+  const cookie = cookies();
+
+  const access_token = cookie.get("access_token");
+
+  if (!cookie) {
+    return {
+      okay: false,
+      message: "sorry try signing in again",
+    };
+  }
+
+  const { user, error } = await verifyAuth(access_token?.value);
+
+  if (error || !user) {
+    return {
+      okay: false,
+      message: error,
+    };
+  }
+
+  const findUser = await db.user.findUnique({
+    where: {
+      user_id: user.user_id,
+    },
+  });
+
+  if (!findUser) {
+    return {
+      okay: false,
+      message: "could not find user try signing up first",
+    };
+  }
+
+  return {
+    okay: true,
+    user: findUser,
+  };
 }

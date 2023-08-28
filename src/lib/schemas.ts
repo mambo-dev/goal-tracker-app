@@ -52,3 +52,17 @@ export const updatePasswordSchema = z
     message: "Passwords don't match",
     path: ["confirmPassword"],
   });
+
+export const createGoalSchema = z.object({
+  goalTitle: z.string().min(1, "please provide a goal title"),
+  goalUserTimeline: z.date({
+    required_error: "a date timeline is required",
+  }),
+  goalTypeTimeline: z
+    .date({
+      invalid_type_error: "provide type of date",
+    })
+    .default(new Date()),
+  goalAchieved: z.boolean().default(false),
+  goalType: z.enum(["daily", "weekly", "monthly", "yearly"]),
+});

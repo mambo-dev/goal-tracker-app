@@ -1,3 +1,5 @@
+import { User } from "@prisma/client";
+
 export type ServerResponse<T> = {
   error?: ZodIssues[] | HandleError[];
   data?: T;
@@ -20,4 +22,10 @@ export type DecodedToken = {
   id: number;
   iat: number;
   exp: number;
+};
+
+export type UserExistsAndAuthorized = {
+  okay: boolean;
+  message?: string;
+  user?: User;
 };
