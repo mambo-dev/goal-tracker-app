@@ -32,16 +32,17 @@ model Account {
 }
 
 model Goal {
-  goal_id            Int       @id @default(autoincrement())
-  goal_user          User      @relation(fields: [goal_user_id], references: [user_id], onDelete: Cascade)
-  goal_user_id       Int
-  goal_title         String
-  goal_user_timeline DateTime
-  goal_type_timeline DateTime
-  goal_achieved      Boolean
-  goal_type          Type
-  goal_subgoals      SubGoal[]
-  goal_streak        Streak[]
+  goal_id                Int       @id @default(autoincrement())
+  goal_user              User      @relation(fields: [goal_user_id], references: [user_id], onDelete: Cascade)
+  goal_user_id           Int
+  goal_title             String
+  goal_user_timeline     DateTime
+  goal_type_timeline     DateTime
+  goal_previous_timeline DateTime
+  goal_achieved          Boolean
+  goal_type              Type
+  goal_subgoals          SubGoal[]
+  goal_streak            Streak[]
 }
 
 enum Type {

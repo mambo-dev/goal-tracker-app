@@ -4,7 +4,8 @@ import { ServerResponse } from "@/lib/types";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getIdFromParams } from "@/lib/utils";
-import { Goal } from "@prisma/client";
+import { Goal, Type } from "@prisma/client";
+import { addDays, addMonths, addWeeks, addYears } from "date-fns";
 
 export async function PUT(
   request: Request
@@ -70,7 +71,7 @@ export async function PUT(
         });
       }
 
-      await updateGoal(findGoal.goal_id, findGoal.goal_achieved);
+      await updateGoal(findGoal);
 
       return NextResponse.json(
         {
@@ -84,7 +85,7 @@ export async function PUT(
     }
 
     if (!findGoal.goal_achieved) {
-      await updateGoal(findGoal.goal_id, findGoal.goal_achieved);
+      await updateGoal(findGoal);
     }
 
     //if no subgoals just update the goal
@@ -174,8 +175,7 @@ async function updateOrCreateStreak(goal: Goal): Promise<boolean> {
     if (goalHasStreak && !goalHasStreak.streak_endtime) {
       if (
         goalHasStreak.streak_updated_at &&
-        (goalHasStreak.streak_updated_at < goal.goal_type_timeline ||
-          goalHasStreak.streak_updated_at < goal.goal_user_timeline)
+        goalHasStreak.streak_updated_at < goal.goal_previous_timeline
       ) {
         return true;
       }
@@ -213,14 +213,35 @@ async function updateOrCreateStreak(goal: Goal): Promise<boolean> {
   }
 }
 
-async function updateGoal(goalId: number, goalAchievement: boolean) {
+async function updateGoal(goal: Goal) {
   const updatedgoal = await db.goal.update({
     where: {
-      goal_id: goalId,
+      goal_id: goal.goal_id,
     },
     data: {
-      goal_achieved: !goalAchievement,
+      goal_achieved: !goal.goal_achieved,
+      goal_previous_timeline: goal.goal_previous_timeline,
+      goal_type_timeline: setNewTimeline(
+        goal.goal_type,
+        goal.goal_type_timeline
+      ),
     },
   });
   return updatedgoal;
+}
+
+function setNewTimeline(goalType: Type, goalTimeline: Date): Date {
+  switch (goalType) {
+    case "daily":
+      return addDays(goalTimeline, 1);
+
+    case "weekly":
+      return addWeeks(goalTimeline, 1);
+
+    case "monthly":
+      return addMonths(goalTimeline, 1);
+
+    case "yearly":
+      return addYears(goalTimeline, 1);
+  }
 }
