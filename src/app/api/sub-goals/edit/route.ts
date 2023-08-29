@@ -1,17 +1,17 @@
 import { userExistsAndAuthorized } from "@/lib/auth";
 import { db } from "@/lib/prisma";
-import { createGoalSchema, createSubGoalSchema } from "@/lib/schemas";
+import { editSubGoalSchema } from "@/lib/schemas";
 import { ServerResponse } from "@/lib/types";
 import { getIdFromParams } from "@/lib/utils";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-export async function POST(
+export async function PUT(
   request: Request
 ): Promise<NextResponse<ServerResponse<boolean>>> {
   try {
     const body = await request.json();
-    const goalId = getIdFromParams("goalId", request.url);
+    const subGoalId = getIdFromParams("subGoalId", request.url);
 
     const { user, message } = await userExistsAndAuthorized();
 
@@ -28,20 +28,18 @@ export async function POST(
     }
 
     let { subGoalAchieved, subGoalTimeline, subGoalTitle } =
-      createSubGoalSchema.parse({
+      editSubGoalSchema.parse({
         ...body,
         subGoalTimeline: new Date(body.subGoalTimeline),
       });
 
-    await db.subGoal.create({
+    await db.subGoal.update({
+      where: {
+        subgoal_id: subGoalId,
+      },
       data: {
         subgoal_achieved: subGoalAchieved,
         subgoal_title: subGoalTitle,
-        subgoal_goal: {
-          connect: {
-            goal_id: goalId,
-          },
-        },
         subgoal_user_timeline: subGoalTimeline,
       },
     });

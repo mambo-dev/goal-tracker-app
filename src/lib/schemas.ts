@@ -62,10 +62,24 @@ export const createGoalSchema = z.object({
 });
 
 export const editGoalSchema = z.object({
-  goalTitle: z.string(),
-  goalUserTimeline: z.date(),
+  goalTitle: z.string().optional(),
+  goalUserTimeline: z.date().optional(),
 });
 
 export const createSubGoalSchema = z.object({
   subGoalTitle: z.string().min(1, "you need to provide a title for subgoals"),
+  subGoalTimeline: z.date({
+    required_error: "a timeline for this sub goal is",
+  }),
+  subGoalAchieved: z.boolean().default(true),
+});
+
+export const editSubGoalSchema = z.object({
+  subGoalTitle: z
+    .string({
+      invalid_type_error: "please provide a string",
+    })
+    .optional(),
+  subGoalTimeline: z.date().optional(),
+  subGoalAchieved: z.boolean().default(true),
 });
