@@ -65,3 +65,7 @@ export const editGoalSchema = z.object({
   goalTitle: z.string(),
   goalUserTimeline: z.date(),
 });
+
+export const createSubGoalSchema = z.object({
+  subGoalTitle: z.string().min(1, "you need to provide a title for subgoals"),
+});
