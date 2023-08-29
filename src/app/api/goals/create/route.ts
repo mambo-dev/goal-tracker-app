@@ -57,6 +57,7 @@ export async function POST(
         goal_type: goalType,
         goal_type_timeline: goalTypeTimeline,
         goal_user_timeline: goalUserTimeline,
+        goal_previous_timeline: goalUserTimeline,
         goal_user: {
           connect: {
             user_id: user.user_id,
