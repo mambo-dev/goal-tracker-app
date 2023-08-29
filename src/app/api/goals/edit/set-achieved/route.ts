@@ -172,6 +172,14 @@ async function updateOrCreateStreak(goal: Goal): Promise<boolean> {
     });
 
     if (goalHasStreak && !goalHasStreak.streak_endtime) {
+      if (
+        goalHasStreak.streak_updated_at &&
+        (goalHasStreak.streak_updated_at < goal.goal_type_timeline ||
+          goalHasStreak.streak_updated_at < goal.goal_user_timeline)
+      ) {
+        return true;
+      }
+
       await db.streak.update({
         where: {
           streak_id: goalHasStreak.streak_id,
