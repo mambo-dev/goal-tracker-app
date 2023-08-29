@@ -69,10 +69,22 @@ export async function PUT(
           },
         });
       }
+
+      await updateGoal(findGoal.goal_id, findGoal.goal_achieved);
+
+      return NextResponse.json(
+        {
+          data: true,
+          okay: true,
+        },
+        {
+          status: 200,
+        }
+      );
     }
 
     if (!findGoal.goal_achieved) {
-      await updateGoal(findGoal.goal_id);
+      await updateGoal(findGoal.goal_id, findGoal.goal_achieved);
     }
 
     //if no subgoals just update the goal
@@ -90,11 +102,9 @@ export async function PUT(
       );
     }
 
-    const allSubGoalsAchieved = await findGoal.goal_subgoals.every(
-      (subgoal) => {
-        return subgoal.subgoal_achieved;
-      }
-    );
+    const allSubGoalsAchieved = findGoal.goal_subgoals.every((subgoal) => {
+      return subgoal.subgoal_achieved;
+    });
 
     if (!allSubGoalsAchieved) {
       return NextResponse.json(
@@ -195,13 +205,13 @@ async function updateOrCreateStreak(goal: Goal): Promise<boolean> {
   }
 }
 
-async function updateGoal(goalId: number) {
+async function updateGoal(goalId: number, goalAchievement: boolean) {
   const updatedgoal = await db.goal.update({
     where: {
       goal_id: goalId,
     },
     data: {
-      goal_achieved: true,
+      goal_achieved: !goalAchievement,
     },
   });
   return updatedgoal;
