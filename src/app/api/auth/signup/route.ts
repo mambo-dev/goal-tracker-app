@@ -17,6 +17,31 @@ export async function POST(
 
     const { email, password, username } = signUpSchema.parse(body);
 
+    const userExists = await db.user.findFirst({
+      where: {
+        OR: [
+          {
+            user_username: username,
+          },
+          {
+            user_email: email,
+          },
+        ],
+      },
+    });
+
+    if (userExists) {
+      return NextResponse.json({
+        error: [
+          {
+            message:
+              "This user already exists kindly try a different email or username",
+          },
+        ],
+        okay: false,
+      });
+    }
+
     const hash = await argon2.hash(password);
 
     const newUser = await db.user.create({

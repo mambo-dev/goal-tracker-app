@@ -18,7 +18,7 @@ export default async function signUp(signUpDetails: SignUpDetails) {
 
   const data = (await res.json()) as ServerResponse<boolean>;
 
-  if (data.error && !data.data) {
+  if (!data.okay) {
     if (data.error instanceof Array) {
       throw new Error(JSON.stringify(data.error));
     }
