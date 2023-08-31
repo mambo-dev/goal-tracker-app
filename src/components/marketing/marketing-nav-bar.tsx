@@ -30,23 +30,26 @@ export default function MarketingNavBar({}: Props) {
   ];
 
   return (
-    <nav className="w-full flex items-center justify-between">
+    <nav className="w-full px-6 py-2 flex items-center text-slate-700 justify-between">
       <div className="w-fit">
-        <Heading size="lg" className="text-slate-700 font-semibold">
-          {" "}
-          Goalee{" "}
-        </Heading>
+        <Link href="/">
+          <Heading size="sm" className="text-slate-700 font-semibold">
+            Goalee
+          </Heading>
+        </Link>
       </div>
-      <ul className="list-none flex items-center gap-2">
+      <ul className="list-none flex items-center gap-8 ">
         {navLinks.map((link, index) => {
           return (
             <Link key={index} href={link.link}>
-              <li>{link.title}</li>
+              <li className="hover:underline transition-all delay-100 hover:font-medium">
+                {link.title}
+              </li>
             </Link>
           );
         })}
       </ul>
-      <div className="flex items-center justify-center gap-3">
+      <div className="  flex items-center justify-center gap-3">
         <SignUp />
         <SignIn />
       </div>
