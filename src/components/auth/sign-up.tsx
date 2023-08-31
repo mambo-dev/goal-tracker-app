@@ -15,7 +15,15 @@ type Props = {};
 export default function SignUp({}: Props) {
   return (
     <Modal
-      button={<button>sign up</button>}
+      button={
+        <Button
+          size="default"
+          variant="default"
+          className="w-28  shadow-md shadow-purple-300"
+        >
+          Sign up
+        </Button>
+      }
       contentClassName="max-w-md"
       title="Welcome To Goalee"
       description="Glad to see you join us, fill in the details below to get started"

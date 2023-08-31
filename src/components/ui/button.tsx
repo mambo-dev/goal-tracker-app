@@ -13,12 +13,14 @@ export const buttonVariants = cva(
         ghost: "bg-transparent text-green-600 hover:underline ",
         link: "bg-green-500 text-white w-full  focus:bg-green-400 hover:bg-green-600 focus:outline-none  focus:border-green-600 hover:border-green-500  ",
         empty: "bg-transparent text-green-600 hover:underline ",
+        outline:
+          "bg-slate-100 inline-flex items-center justify-center border border-gray-300  text-slate-700 font-medium  ",
       },
       size: {
-        default: "h-10 py-2 px-4",
-        sm: "h-9 py-2 px-4 rounded-md",
-        lg: "h-11 py-2 px-4 rounded-md",
-        xl: "h-11 py-2 px-8 rounded-md",
+        default: "h-10  py-2 px-4",
+        sm: "h-10 py-2 px-2 ",
+        lg: "h-10 py-2 px-4 ",
+        xl: "h-10 py-2 px-8 ",
       },
       defaultVariants: {
         variant: "default",
