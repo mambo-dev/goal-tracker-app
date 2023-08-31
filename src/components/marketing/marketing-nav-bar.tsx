@@ -4,9 +4,11 @@ import Heading from "@/components/ui/heading";
 import SignUp from "../auth/sign-up";
 import SignIn from "../auth/sign-in";
 
-type Props = {};
+type Props = {
+  isLoggedIn: boolean;
+};
 
-export default function MarketingNavBar({}: Props) {
+export default function MarketingNavBar({ isLoggedIn }: Props) {
   const navLinks: {
     title: string;
     link: string;
@@ -27,6 +29,10 @@ export default function MarketingNavBar({}: Props) {
       title: "About",
       link: "/about",
     },
+    {
+      title: "Dashboard",
+      link: "/dashboard",
+    },
   ];
 
   return (
@@ -42,7 +48,11 @@ export default function MarketingNavBar({}: Props) {
         {navLinks.map((link, index) => {
           return (
             <Link key={index} href={link.link}>
-              <li className="hover:underline transition-all delay-100 hover:font-medium">
+              <li
+                className={`hover:underline transition-all delay-100 hover:font-medium ${
+                  link.title === "Dashboard" ? !isLoggedIn && "hidden" : ""
+                } `}
+              >
                 {link.title}
               </li>
             </Link>
