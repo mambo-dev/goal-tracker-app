@@ -3,6 +3,7 @@ import React from "react";
 import Heading from "@/components/ui/heading";
 import SignUp from "../auth/sign-up";
 import SignIn from "../auth/sign-in";
+import SignOut from "../auth/sign-out";
 
 type Props = {
   isLoggedIn: boolean;
@@ -39,7 +40,7 @@ export default function MarketingNavBar({ isLoggedIn }: Props) {
     <nav className="w-full px-6 py-2 flex items-center text-slate-700 justify-between">
       <div className="w-fit">
         <Link href="/">
-          <Heading size="sm" className="text-slate-700 font-semibold">
+          <Heading size="xs" className="text-slate-700 font-semibold">
             Goalee
           </Heading>
         </Link>
@@ -60,7 +61,9 @@ export default function MarketingNavBar({ isLoggedIn }: Props) {
         })}
       </ul>
       {isLoggedIn ? (
-        <div></div>
+        <div className="  flex items-center justify-center gap-3">
+          <SignOut />
+        </div>
       ) : (
         <div className="  flex items-center justify-center gap-3">
           <SignUp />
