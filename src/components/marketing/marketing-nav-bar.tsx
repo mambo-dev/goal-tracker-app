@@ -59,10 +59,14 @@ export default function MarketingNavBar({ isLoggedIn }: Props) {
           );
         })}
       </ul>
-      <div className="  flex items-center justify-center gap-3">
-        <SignUp />
-        <SignIn />
-      </div>
+      {isLoggedIn ? (
+        <div></div>
+      ) : (
+        <div className="  flex items-center justify-center gap-3">
+          <SignUp />
+          <SignIn />
+        </div>
+      )}
     </nav>
   );
 }
