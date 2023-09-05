@@ -26,5 +26,12 @@ export type DecodedToken = {
 
 export type UserExistsAndAuthorized = {
   message?: string;
-  user: User | null;
+  user: {
+    user_id: number;
+    user_username: string;
+    user_email: string;
+    user_password: string;
+    account_verified: boolean;
+    account_two_factor: boolean;
+  } | null;
 };

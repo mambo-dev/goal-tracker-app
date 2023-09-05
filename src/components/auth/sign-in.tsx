@@ -73,6 +73,7 @@ function SignInForm() {
 
   return (
     <form
+      id="signin"
       onSubmit={handleSubmit}
       className="w-full flex items-center justify-center gap-3 flex-col "
     >

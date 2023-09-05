@@ -79,6 +79,19 @@ export async function userExistsAndAuthorized(): Promise<UserExistsAndAuthorized
     where: {
       user_id: user.user_id,
     },
+    include: {
+      user_account: {
+        select: {
+          account_verified: true,
+          account_two_factor: true,
+          account_reset_password_code: false,
+          account_id: false,
+          account_user: false,
+          account_two_factor_code: false,
+          account_verified_code: false,
+        },
+      },
+    },
   });
 
   if (!findUser) {
@@ -88,7 +101,23 @@ export async function userExistsAndAuthorized(): Promise<UserExistsAndAuthorized
     };
   }
 
+  if (!findUser.user_account) {
+    return {
+      user: null,
+      message: "could not find an account associated with this user",
+    };
+  }
+
+  const returnUser = {
+    user_id: findUser.user_id,
+    user_username: findUser.user_username,
+    user_email: findUser.user_email,
+    user_password: findUser.user_password,
+    account_verified: findUser.user_account.account_two_factor,
+    account_two_factor: findUser.user_account.account_verified,
+  };
+
   return {
-    user: findUser,
+    user: returnUser,
   };
 }
