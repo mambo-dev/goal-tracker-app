@@ -26,7 +26,10 @@ export default async function RootLayout({
         <div className="flex items-center w-full ">
           <SideBarNav />
           <div className="min-h-screen bg-white flex-1 flex flex-col">
-            <DashboardMainNav />
+            <DashboardMainNav
+              enabledTwoFactor={user.account_two_factor}
+              verifiedAccount={user.account_verified}
+            />
             <main className="container ">{children}</main>
           </div>
         </div>

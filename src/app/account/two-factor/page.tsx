@@ -9,7 +9,7 @@ import useError from "@/components/hooks/error";
 import { twoFactorSchema } from "@/lib/schemas";
 import { toast } from "@/components/ui/toast";
 import { useRouter, useSearchParams } from "next/navigation";
-import verifyTwoFactorCode from "@/lib/api-calls/account/two-factor";
+import { verifyTwoFactorCode } from "@/lib/api-calls/account/two-factor";
 
 export const metadata: Metadata = {
   title: "Goalee | Two factor",

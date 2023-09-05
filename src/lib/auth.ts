@@ -113,8 +113,8 @@ export async function userExistsAndAuthorized(): Promise<UserExistsAndAuthorized
     user_username: findUser.user_username,
     user_email: findUser.user_email,
     user_password: findUser.user_password,
-    account_verified: findUser.user_account.account_two_factor,
-    account_two_factor: findUser.user_account.account_verified,
+    account_verified: findUser.user_account.account_verified,
+    account_two_factor: findUser.user_account.account_two_factor,
   };
 
   return {
