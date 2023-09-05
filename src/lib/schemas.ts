@@ -36,6 +36,12 @@ export const twoFactorSchema = z.object({
     .min(1, "please provide the code sent in your email"),
 });
 
+export const verifyEmailSchema = z.object({
+  verificationCode: z
+    .string()
+    .min(1, "please provide the code sent in your email"),
+});
+
 export const updatePasswordSchema = z
   .object({
     password: z.string().min(1, "please provide a password"),

@@ -3,17 +3,15 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import verifyAuth from "@/lib/auth";
 import { db } from "@/lib/prisma";
+import { verifyEmailSchema } from "@/lib/schemas";
+import { z } from "zod";
 
-export async function GET(
+export async function POST(
   request: Request
 ): Promise<NextResponse<ServerResponse<boolean>>> {
   try {
-    const { searchParams } = new URL(request.url);
-    const verificationCode = searchParams.get("verificationCode");
     const cookie = cookies();
-    if (!verificationCode) {
-      throw new Error("invalid code value sent");
-    }
+    const body = request.json();
 
     const access_token = cookie.get("access_token");
     if (!cookie) {
@@ -70,6 +68,8 @@ export async function GET(
       );
     }
 
+    const { verificationCode } = verifyEmailSchema.parse(body);
+
     if (findUser.user_account.account_verified_code !== verificationCode) {
       return NextResponse.json(
         {
@@ -105,6 +105,18 @@ export async function GET(
       }
     );
   } catch (error) {
+    console.log(error);
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        {
+          error: error.issues,
+          okay: false,
+        },
+        {
+          status: 403,
+        }
+      );
+    }
     return NextResponse.json(
       {
         error: [
