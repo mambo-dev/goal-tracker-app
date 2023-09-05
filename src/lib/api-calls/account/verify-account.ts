@@ -20,3 +20,23 @@ export async function verifyUserEmail(code: string): Promise<boolean> {
 
   return data.data;
 }
+
+export async function resendUserVerification(): Promise<boolean> {
+  const res = await fetch(`/api/auth/account/resend`, {
+    method: "GET",
+    headers: {
+      "Content-type": "application/json",
+    },
+  });
+
+  const data = (await res.json()) as ServerResponse<boolean>;
+  if (!data.okay || !data.data) {
+    if (data.error instanceof Array) {
+      throw new Error(JSON.stringify(data.error));
+    }
+
+    throw new Error(data.error ?? "something unexpected happened");
+  }
+
+  return data.data;
+}
