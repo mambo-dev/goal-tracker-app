@@ -10,9 +10,13 @@ import sendEmail from "@/lib/sendemail";
 import { twoFactorAuthenticationHtml } from "@/lib/emailhtmls";
 import { uuid } from "uuidv4";
 
-export async function POST(
-  request: Request
-): Promise<NextResponse<ServerResponse<boolean>>> {
+export async function POST(request: Request): Promise<
+  NextResponse<
+    ServerResponse<{
+      two_factor: boolean;
+    }>
+  >
+> {
   try {
     const body = await request.json();
 
@@ -36,7 +40,7 @@ export async function POST(
     if (!findUser) {
       return NextResponse.json(
         {
-          message: [
+          error: [
             {
               message: "could not find user try signing up first",
             },
@@ -57,7 +61,7 @@ export async function POST(
     if (!verifyPassword) {
       return NextResponse.json(
         {
-          message: [
+          error: [
             {
               message: "invalid password or username",
             },
@@ -102,7 +106,9 @@ export async function POST(
       });
       return NextResponse.json(
         {
-          data: true,
+          data: {
+            two_factor: true,
+          },
           okay: true,
         },
         {
@@ -122,7 +128,9 @@ export async function POST(
 
     return NextResponse.json(
       {
-        data: true,
+        data: {
+          two_factor: false,
+        },
         okay: true,
       },
       {

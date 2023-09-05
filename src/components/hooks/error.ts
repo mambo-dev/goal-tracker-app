@@ -22,7 +22,9 @@ export default function useError() {
       return;
     }
 
-    if (Array.isArray(JSON.parse(error.message))) {
+    if (
+      Array.isArray(isJsonString(error.message) && JSON.parse(error.message))
+    ) {
       const errors = JSON.parse(error.message) as HandleError[];
       errors.forEach((error) => {
         toast({
@@ -48,4 +50,13 @@ export default function useError() {
   return {
     handleError,
   };
+}
+
+function isJsonString(str: string) {
+  try {
+    JSON.parse(str);
+  } catch (e) {
+    return false;
+  }
+  return true;
 }

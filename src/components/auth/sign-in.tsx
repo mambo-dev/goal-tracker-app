@@ -7,6 +7,7 @@ import useError from "../hooks/error";
 import { signInSchema } from "@/lib/schemas";
 import { toast } from "../ui/toast";
 import { Input } from "../ui/input";
+import signIn from "@/lib/api-calls/auth/sign-in";
 
 type Props = {};
 
@@ -50,11 +51,17 @@ function SignInForm() {
     e.preventDefault();
     try {
       const userDetails = signInSchema.parse(initialState);
+      const { two_factor } = await signIn(userDetails);
 
       toast({
         title: "Welcome back!",
         message: "Continue your tracking journey",
       });
+
+      if (two_factor) {
+        router.push("/account/two-factor");
+        return;
+      }
 
       router.push("/dashboard");
     } catch (error: any) {
