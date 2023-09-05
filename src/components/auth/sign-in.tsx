@@ -59,7 +59,7 @@ function SignInForm() {
       });
 
       if (two_factor) {
-        router.push("/account/two-factor");
+        router.push(`/account/two-factor?username=${userDetails.username}`);
         return;
       }
 

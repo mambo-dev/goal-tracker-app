@@ -4,6 +4,7 @@ import { HandleError } from "@/lib/types";
 
 export default function useError() {
   function handleError(error: any) {
+    console.log(error);
     if (error instanceof z.ZodError) {
       error.issues
         .map((error) => {

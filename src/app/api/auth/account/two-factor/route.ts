@@ -6,8 +6,14 @@ import { db } from "@/lib/prisma";
 import { z } from "zod";
 import { twoFactorSchema } from "@/lib/schemas";
 import jwt from "jsonwebtoken";
-import { getJwtSecret } from "@/lib/utils";
 import cookie from "cookie";
+
+function getJwtSecret() {
+  if (!process.env.JWT_SECRET) {
+    throw new Error("missing jwt credentials");
+  }
+  return process.env.JWT_SECRET;
+}
 
 // enable two factor
 export async function GET(
@@ -115,16 +121,16 @@ export async function POST(
   try {
     const body = await request.json();
     const { searchParams } = new URL(request.url);
-    const email = searchParams.get("email");
+    const username = searchParams.get("username");
     const { twoFactorCode } = twoFactorSchema.parse(body);
 
-    if (!email) {
-      throw new Error("invalid email value sent");
+    if (!username) {
+      throw new Error("invalid username value sent");
     }
 
     const findUser = await db.user.findUnique({
       where: {
-        user_email: email,
+        user_username: username,
       },
       include: {
         user_account: true,
@@ -198,6 +204,7 @@ export async function POST(
       }
     );
   } catch (error) {
+    console.log(error);
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
