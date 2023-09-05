@@ -1,7 +1,7 @@
 import { ServerResponse } from "@/lib/types";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import verifyAuth from "@/lib/auth";
+import verifyAuth, { userExistsAndAuthorized } from "@/lib/auth";
 import { db } from "@/lib/prisma";
 import { verifyEmailSchema } from "@/lib/schemas";
 import { z } from "zod";
@@ -11,9 +11,8 @@ export async function POST(
 ): Promise<NextResponse<ServerResponse<boolean>>> {
   try {
     const cookie = cookies();
-    const body = request.json();
+    const body = await request.json();
 
-    const access_token = cookie.get("access_token");
     if (!cookie) {
       return NextResponse.json(
         {
@@ -27,14 +26,14 @@ export async function POST(
         { status: 400 }
       );
     }
-    const { user, error } = await verifyAuth(access_token?.value);
+    const { user, message } = await userExistsAndAuthorized();
 
-    if (error || !user) {
+    if (message || !user) {
       return NextResponse.json(
         {
           error: [
             {
-              message: error,
+              message: message,
             },
           ],
           okay: false,
@@ -55,7 +54,7 @@ export async function POST(
     if (!findUser || !findUser.user_account) {
       return NextResponse.json(
         {
-          message: [
+          error: [
             {
               message: "could not find user try signing up first",
             },
@@ -73,7 +72,7 @@ export async function POST(
     if (findUser.user_account.account_verified_code !== verificationCode) {
       return NextResponse.json(
         {
-          message: [
+          error: [
             {
               message: "the verification code did not match please try again",
             },
