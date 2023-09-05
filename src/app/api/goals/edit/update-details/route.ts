@@ -56,6 +56,7 @@ export async function PUT(
       ...body,
       goalUserTimeline: new Date(body.goalUserTimeline),
     });
+
     let goalTypeTimeline: Date = assignTimeline(findGoal.goal_type);
 
     if (goalUserTimeline > goalTypeTimeline) {

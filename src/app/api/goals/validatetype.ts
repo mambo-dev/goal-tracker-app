@@ -14,5 +14,8 @@ export function assignTimeline(goalType: Type) {
 
     case "yearly":
       return addYears(new Date(), 1);
+
+    default:
+      throw new Error("no type was provided");
   }
 }
