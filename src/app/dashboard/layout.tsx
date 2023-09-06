@@ -1,6 +1,5 @@
 import "@/app/globals.css";
 import DashboardMainNav from "@/components/dashboard/dashboard-nav";
-import SideBarNav from "@/components/dashboard/sidebar-nav";
 import { userExistsAndAuthorized } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
@@ -17,21 +16,15 @@ export default async function RootLayout({
   const { user } = await userExistsAndAuthorized();
 
   if (!user) {
-    redirect("/#signin");
+    redirect("/?signin=true");
   }
 
   return (
     <html lang="en">
       <body>
-        <div className="flex items-center w-full ">
-          <SideBarNav />
-          <div className="min-h-screen bg-white flex-1 flex flex-col">
-            <DashboardMainNav
-              enabledTwoFactor={user.account_two_factor}
-              verifiedAccount={user.account_verified}
-            />
-            <main className="container ">{children}</main>
-          </div>
+        <div className="w-full min-h-screen bg-white/95 flex-1 flex flex-col">
+          <DashboardMainNav user={user} />
+          <main className="container">{children}</main>
         </div>
       </body>
     </html>

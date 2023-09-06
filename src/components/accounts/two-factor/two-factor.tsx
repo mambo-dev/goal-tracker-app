@@ -9,6 +9,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { verifyTwoFactorCode } from "@/lib/api-calls/account/two-factor";
 import Paragraph from "@/components/ui/paragraph";
 import Button from "@/components/ui/button";
+import FormHeader from "@/components/ui/form-header";
 
 type Props = {};
 
@@ -56,14 +57,10 @@ export default function TwoFactorForm({}: Props) {
       onSubmit={handleSubmit}
       className="w-full max-w-full md:max-w-lg lg:max-w-md rounded-md mx-auto mt-14 bg-white shadow-md py-6 h-fit px-3 flex items-center justify-center gap-3 flex-col"
     >
-      <div className="w-full flex text-left items-start justify-center flex-col ">
-        <h1 className="text-xl text-left font-bold ">
-          Two Factor Authentication
-        </h1>
-        <Paragraph size="sm" className="text-xs">
-          Kindly enter the code sent to your email address
-        </Paragraph>
-      </div>
+      <FormHeader
+        description="Kindly enter the code sent to your email address"
+        heading="Two Factor Authentication"
+      />
       <Input
         value={code}
         onChange={(e) => setCode(e.target.value)}
