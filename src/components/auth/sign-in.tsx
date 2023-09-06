@@ -8,6 +8,7 @@ import { signInSchema } from "@/lib/schemas";
 import { toast } from "../ui/toast";
 import { Input } from "../ui/input";
 import signIn from "@/lib/api-calls/auth/sign-in";
+import Link from "next/link";
 
 type Props = {};
 
@@ -103,6 +104,13 @@ function SignInForm() {
       >
         sign in
       </Button>
+      <Link
+        type="button"
+        href="/account/forgot-password/request-reset"
+        className="text-xs ml-auto w-fit outline-none h-fit text-purple-500 hover:underline"
+      >
+        forgot password?
+      </Link>
     </form>
   );
 }

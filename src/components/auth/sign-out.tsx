@@ -23,7 +23,7 @@ export default function SignOut({}: Props) {
         type: "success",
         title: "Good Bye 👋",
         message: "can't wait to see you again. ",
-        duration: 2000,
+        duration: 1000,
       });
 
       router.refresh();
