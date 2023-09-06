@@ -7,6 +7,7 @@ import { z } from "zod";
 import { twoFactorSchema } from "@/lib/schemas";
 import jwt from "jsonwebtoken";
 import cookie from "cookie";
+import { uuid } from "uuidv4";
 
 function getJwtSecret() {
   if (!process.env.JWT_SECRET) {
@@ -65,7 +66,7 @@ export async function GET(
     if (!findUser || !findUser.user_account) {
       return NextResponse.json(
         {
-          message: [
+          error: [
             {
               message: "could not find user try signing up first",
             },
@@ -140,7 +141,7 @@ export async function POST(
     if (!findUser || !findUser.user_account) {
       return NextResponse.json(
         {
-          message: [
+          error: [
             {
               message: "could not find user try signing up first",
             },
@@ -156,7 +157,7 @@ export async function POST(
     if (findUser.user_account.account_two_factor_code !== twoFactorCode) {
       return NextResponse.json(
         {
-          message: [
+          error: [
             {
               message: "the  code did not match please try again",
             },
@@ -175,6 +176,7 @@ export async function POST(
       },
       data: {
         account_two_factor: true,
+        account_two_factor_code: uuid(),
       },
     });
 

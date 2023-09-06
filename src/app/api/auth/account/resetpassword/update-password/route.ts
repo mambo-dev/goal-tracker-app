@@ -4,6 +4,7 @@ import { ServerResponse } from "@/lib/types";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import * as argon2 from "argon2";
+import { uuid } from "uuidv4";
 
 export async function PUT(
   request: Request
@@ -25,7 +26,7 @@ export async function PUT(
     if (!findUser || !findUser.user_account) {
       return NextResponse.json(
         {
-          message: [
+          error: [
             {
               message: "could not find user try signing up first",
             },
@@ -41,7 +42,7 @@ export async function PUT(
     if (findUser.user_account.account_reset_password_code !== resetCode) {
       return NextResponse.json(
         {
-          message: [
+          error: [
             {
               message: "the reset code did not match please try again",
             },
@@ -60,6 +61,11 @@ export async function PUT(
       },
       data: {
         user_password: hash,
+        user_account: {
+          update: {
+            account_reset_password_code: uuid(),
+          },
+        },
       },
     });
 
