@@ -4,7 +4,7 @@ import { Loader2 } from "lucide-react";
 import { cn } from "../utils/cn";
 
 export const buttonVariants = cva(
-  "rounded-md shadow-sm text-white text-sm  inline-flex items-center justify-center ",
+  "rounded-md shadow-sm text-white text-sm  inline-flex items-center justify-center  outline-none",
   {
     variants: {
       variant: {

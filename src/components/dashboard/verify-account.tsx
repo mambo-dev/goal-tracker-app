@@ -13,41 +13,7 @@ import Button from "../ui/button";
 import { toast } from "../ui/toast";
 import { BadgeAlert, BadgeCheck } from "lucide-react";
 
-type Props = {
-  verifiedAccount: boolean;
-};
-
-export default function VerifyAccount({ verifiedAccount }: Props) {
-  return (
-    <>
-      {verifiedAccount ? (
-        <ToolTipCustom
-          content="Great, your account is fully verified"
-          trigger={
-            <button className="w-fit h-fit outline-none rounded-full p-2 bg-slate-50">
-              <BadgeCheck className="h-6 w-6 text-green-500 " />
-            </button>
-          }
-        />
-      ) : (
-        <Modal
-          button={
-            <button className="w-fit h-fit outline-none rounded-full p-2 bg-slate-50">
-              <BadgeAlert className="h-6 w-6 text-red-500 " />
-            </button>
-          }
-          contentClassName="max-w-md"
-          title="Verify you account."
-          description="The code was sent to your email. Glad to see you are using a valid email. Thank you for your trust in us."
-        >
-          <VerifyUserEmail />
-        </Modal>
-      )}
-    </>
-  );
-}
-
-function VerifyUserEmail() {
+export default function VerifyUserEmail() {
   const [isLoading, setIsLoading] = useState(false);
   const [resend, setResend] = useState(false);
   const { handleError } = useError();
