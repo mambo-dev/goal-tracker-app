@@ -74,7 +74,10 @@ export function resetPasswordHtml(message: string, callbackurl: string) {
   <p>${message}</p>
 </div>
 
-
+<div class="message">
+  <p>or follow this link to update your password:</p>
+  <a href=${callbackurl}>approve change of password </a>
+</div>
 
 </body>
 </html>

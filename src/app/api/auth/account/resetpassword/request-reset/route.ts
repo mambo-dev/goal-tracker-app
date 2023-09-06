@@ -44,6 +44,10 @@ export async function POST(
       },
     });
 
+    if (!process.env.WEB_URL) {
+      throw new Error("set the current web url");
+    }
+
     await sendEmail({
       to: findUser.user_email,
       from: "mambo.michael.22@gmail.com",
@@ -51,7 +55,7 @@ export async function POST(
       html: resetPasswordHtml(
         `Hi, we received a request to change your password if this isn't you, you can safely ignore this email otherwise
         you reset password is  <strong>${userAccount.account_reset_password_code}</strong>`,
-        "link"
+        `${process.env.WEB_URL}/account/forgot-password/reset-password?email=${findUser.user_email}&resetCode=${userAccount.account_reset_password_code}`
       ),
     });
 
