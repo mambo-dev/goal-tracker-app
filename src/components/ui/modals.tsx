@@ -15,6 +15,7 @@ type Props = {
   description?: string;
   contentClassName: string;
   children: React.ReactNode;
+  defaultOpen?: boolean;
 };
 
 export default function Modal({
@@ -23,9 +24,10 @@ export default function Modal({
   description,
   contentClassName,
   children,
+  defaultOpen,
 }: Props) {
   return (
-    <Dialog>
+    <Dialog defaultOpen={defaultOpen}>
       <DialogTrigger asChild>{button}</DialogTrigger>
       <DialogContent className={contentClassName}>
         <DialogHeader>

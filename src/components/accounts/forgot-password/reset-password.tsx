@@ -61,7 +61,7 @@ export default function ResetPasswordForm({}: Props) {
         message: "Redirecting you to sign in with new password",
       });
 
-      router.push(`/#signin`);
+      router.push(`/?signin=true`);
     } catch (error: any) {
       handleError(error);
     } finally {

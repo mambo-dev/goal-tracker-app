@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import Modal from "../ui/modals";
 import Button from "../ui/button";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import useError from "../hooks/error";
 import { signInSchema } from "@/lib/schemas";
 import { toast } from "../ui/toast";
@@ -13,8 +13,12 @@ import Link from "next/link";
 type Props = {};
 
 export default function SignIn({}: Props) {
+  const params = useSearchParams();
+  const signin = params.get("signin");
+
   return (
     <Modal
+      defaultOpen={signin ? true : false}
       button={
         <Button size="sm" variant="outline" className="w-20 shadow-none">
           Sign in
