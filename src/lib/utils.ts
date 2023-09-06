@@ -7,3 +7,10 @@ export function getIdFromParams(paramName: string, url: string) {
 
   return Number(id);
 }
+
+export function getWebUrl() {
+  if (!process.env.WEB_URL) {
+    throw new Error("set the current web url");
+  }
+  return process.env.WEB_URL;
+}
