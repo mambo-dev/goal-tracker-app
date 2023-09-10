@@ -36,12 +36,12 @@ export function SelectMenu<T>({
       {label ? (
         <div className="flex flex-col gap-2 w-full ">
           <label className="font-medium text-sm text-slate-800">{label}</label>
-          <SelectTrigger className="w-full text-sm gap-2  group inline-flex items-center bg-white justify-between outline-none  h-fit   rounded-lg border border-slate-300 hover:bg-neutral-100 transition-all delay-75 hover:cursor-pointer py-2 px-3">
+          <SelectTrigger className="w-full text-sm gap-2  group inline-flex items-center bg-white justify-between outline-none  h-10    rounded-lg border border-slate-300 focus:outline-none focus:ring-0  hover:bg-neutral-100 transition-all delay-75 hover:cursor-pointer py-2 px-3">
             <SelectValue placeholder={placeholder} />
           </SelectTrigger>
         </div>
       ) : (
-        <SelectTrigger className="w-full  text-sm gap-2  group inline-flex items-center bg-white justify-between outline-none  h-fit   rounded-lg border border-slate-300 hover:bg-neutral-100 transition-all delay-75 hover:cursor-pointer py-2 px-3">
+        <SelectTrigger className=" w-full text-sm gap-2  group inline-flex items-center bg-white justify-between outline-none  h-10    rounded-lg border border-slate-300 focus:outline-none focus:ring-4 focus:border-purple-400 hover:border-purple-500  ring-opacity-30 ring-purple-300 focus:ring-offset-0 hover:bg-neutral-100 transition-all delay-75 hover:cursor-pointer py-2 px-3">
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
       )}

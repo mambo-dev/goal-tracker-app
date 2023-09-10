@@ -27,28 +27,9 @@ export async function POST(
       );
     }
 
-    let { goalTitle, goalType, goalUserTimeline } = createGoalSchema.parse({
-      ...body,
-      goalUserTimeline: new Date(body.goalUserTimeline),
-    });
+    let { goalTitle, goalType } = createGoalSchema.parse(body);
 
     let goalTypeTimeline: Date = assignTimeline(goalType);
-
-    if (goalUserTimeline > goalTypeTimeline) {
-      return NextResponse.json(
-        {
-          error: [
-            {
-              message: `sorry cannot create that timeline under ${goalType} plan`,
-            },
-          ],
-          okay: false,
-        },
-        {
-          status: 403,
-        }
-      );
-    }
 
     await db.goal.create({
       data: {
@@ -56,8 +37,7 @@ export async function POST(
         goal_achieved: false,
         goal_type: goalType,
         goal_type_timeline: goalTypeTimeline,
-        goal_user_timeline: goalUserTimeline,
-        goal_previous_timeline: goalUserTimeline,
+        goal_previous_timeline: goalTypeTimeline,
         goal_user: {
           connect: {
             user_id: user.user_id,

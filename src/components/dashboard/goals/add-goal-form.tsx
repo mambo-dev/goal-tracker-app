@@ -1,22 +1,22 @@
 "use client";
 import useError from "@/components/hooks/error";
+import Button from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SelectMenu } from "@/components/ui/select-menu";
 import { toast } from "@/components/ui/toast";
 import createGoal from "@/lib/api-calls/goals/goal";
 import { createGoalSchema } from "@/lib/schemas";
 import { Type } from "@prisma/client";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import DatePickerComponent from "../../ui/date-picker";
-import { assignTimeline } from "@/app/api/goals/validatetype";
 
 export default function AddGoalForm() {
-  const [timeLine, setTimeLine] = useState<Date | null>(new Date());
   const [isLoading, setIsLoading] = useState(false);
   const [title, setTitle] = useState("");
   const [type, setType] = useState<Type>("daily");
 
   const { handleError } = useError();
+  const router = useRouter();
 
   const options = [
     { value: "daily", display: "Daily" },
@@ -31,7 +31,6 @@ export default function AddGoalForm() {
     try {
       const goalInput = createGoalSchema.parse({
         goalTitle: title,
-        goalUserTimeline: timeLine,
         goalType: type,
       });
 
@@ -43,6 +42,8 @@ export default function AddGoalForm() {
         title: "New goal added",
         type: "success",
       });
+
+      router.refresh();
     } catch (error) {
       handleError(error);
     } finally {
@@ -70,6 +71,14 @@ export default function AddGoalForm() {
         value={type}
         setValue={setType}
       />
+      <Button
+        size="default"
+        variant="default"
+        className="mt-4"
+        isLoading={isLoading}
+      >
+        create goal
+      </Button>
     </form>
   );
 }

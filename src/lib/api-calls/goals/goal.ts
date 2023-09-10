@@ -3,7 +3,6 @@ import { ServerResponse } from "@/lib/types";
 
 type GoalDetails = {
   goalTitle: string;
-  goalUserTimeline: Date;
   goalType: "daily" | "weekly" | "monthly" | "yearly";
 };
 

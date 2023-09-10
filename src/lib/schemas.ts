@@ -61,9 +61,7 @@ export const updatePasswordSchema = z
 
 export const createGoalSchema = z.object({
   goalTitle: z.string().min(1, "please provide a goal title"),
-  goalUserTimeline: z.date({
-    required_error: "a date timeline is required",
-  }),
+
   goalType: z.enum(["daily", "weekly", "monthly", "yearly"]),
 });
 
