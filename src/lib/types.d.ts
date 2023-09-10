@@ -43,3 +43,9 @@ type NavList = {
   link: string;
   streak?: number;
 };
+
+export type GoalsWithSubGoals = Prisma.GoalGetPayload<{
+  include: {
+    goal_subgoals: true;
+  };
+}>;
