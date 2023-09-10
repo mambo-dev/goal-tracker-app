@@ -14,26 +14,26 @@ export default function DashboardMainNav({ user }: Props) {
   const navList: NavList[] = [
     {
       name: "Overview",
-      link: "/overview",
+      link: "/",
     },
     {
       name: "Daily",
-      link: "/overview",
+      link: "/daily",
       streak: 90,
     },
     {
       name: "Weekly",
-      link: "/overview",
+      link: "/weekly",
       streak: 0,
     },
     {
       name: "Monthly",
-      link: "/overview",
+      link: "/monthly",
       streak: 0,
     },
     {
       name: "Yearly",
-      link: "/overview",
+      link: "/yearly",
       streak: 0,
     },
   ];
@@ -45,7 +45,7 @@ export default function DashboardMainNav({ user }: Props) {
         {navList.map((list, index) => (
           <div className="flex items-center gap-1 justify-center" key={index}>
             <Link
-              href={`/dashboard/${list.link}`}
+              href={`/dashboard${list.link}`}
               key={index}
               className="hover:underline transition-all delay-75 flex items-center gap-2"
             >
