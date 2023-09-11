@@ -7,7 +7,7 @@ import { getIdFromParams } from "@/lib/utils";
 import { Goal, Type } from "@prisma/client";
 import { addDays, addMonths, addWeeks, addYears } from "date-fns";
 
-export async function PUT(
+export async function GET(
   request: Request
 ): Promise<NextResponse<ServerResponse<boolean>>> {
   try {
@@ -29,9 +29,6 @@ export async function PUT(
     const findGoal = await db.goal.findUnique({
       where: {
         goal_id: goalId,
-      },
-      include: {
-        goal_subgoals: true,
       },
     });
 
@@ -88,42 +85,6 @@ export async function PUT(
       await updateGoal(findGoal);
     }
 
-    //if no subgoals just update the goal
-    if (!findGoal.goal_subgoals || findGoal.goal_subgoals.length <= 0) {
-      await updateOrCreateStreak(findGoal);
-
-      return NextResponse.json(
-        {
-          data: true,
-          okay: true,
-        },
-        {
-          status: 200,
-        }
-      );
-    }
-
-    const allSubGoalsAchieved = findGoal.goal_subgoals.every((subgoal) => {
-      return subgoal.subgoal_achieved;
-    });
-
-    if (!allSubGoalsAchieved) {
-      return NextResponse.json(
-        {
-          error: [
-            {
-              message:
-                "Oops sorry you  need to achieve all sub goals under this goal to mark it as achieved",
-            },
-          ],
-          okay: false,
-        },
-        {
-          status: 403,
-        }
-      );
-    }
-
     await updateOrCreateStreak(findGoal);
 
     return NextResponse.json(
@@ -136,6 +97,7 @@ export async function PUT(
       }
     );
   } catch (error) {
+    console.log(error);
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {

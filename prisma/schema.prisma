@@ -32,15 +32,17 @@ model Account {
 }
 
 model Goal {
-  goal_id                Int       @id @default(autoincrement())
-  goal_user              User      @relation(fields: [goal_user_id], references: [user_id], onDelete: Cascade)
+  goal_id                Int      @id @default(autoincrement())
+  goal_user              User     @relation(fields: [goal_user_id], references: [user_id], onDelete: Cascade)
   goal_user_id           Int
   goal_title             String
   goal_type_timeline     DateTime // generateed based on the type of timeline
   goal_previous_timeline DateTime
   goal_achieved          Boolean
   goal_type              Type
-  goal_subgoals          SubGoal[]
+  goal_sub_goal          Goal?    @relation("GoalSubGoals", fields: [goal_sub_goal_id], references: [goal_id])
+  goal_sub_goal_id       Int?
+  goal_sub_goals         Goal[]   @relation("GoalSubGoals")
   goal_streak            Streak[]
 }
 
@@ -49,18 +51,6 @@ enum Type {
   weekly
   monthly
   yearly
-}
-
-model SubGoal {
-  subgoal_id         Int       @id @default(autoincrement())
-  subgoal_goal       Goal      @relation(fields: [subgoal_goal_id], references: [goal_id], onDelete: Cascade)
-  subgoal_goal_id    Int
-  subgoal_title      String
-  subgoal_timeline   DateTime // will come from the user
-  subgoal_achieved   Boolean
-  subgoal_subgoal    SubGoal?  @relation("SubGoalSubgoals", fields: [subgoal_subgoal_id], references: [subgoal_id])
-  subgoal_subgoal_id Int?
-  subgoal_subgoals   SubGoal[] @relation("SubGoalSubgoals")
 }
 
 model Streak {

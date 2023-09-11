@@ -1,6 +1,5 @@
-import { Goal, Prisma, SubGoal, Type } from "@prisma/client";
+import { Goal, Prisma, Type } from "@prisma/client";
 import { db } from "./prisma";
-import { GoalsWithSubGoals } from "./types";
 
 export function getIdFromParams(paramName: string, url: string) {
   const { searchParams } = new URL(url);
@@ -19,14 +18,11 @@ export function getWebUrl() {
   return process.env.WEB_URL;
 }
 
-export async function getGoalsByType(type: Type): Promise<GoalsWithSubGoals[]> {
+export async function getGoalsByType(type: Type): Promise<Goal[]> {
   try {
     const goals = await db.goal.findMany({
       where: {
         goal_type: type,
-      },
-      include: {
-        goal_subgoals: true,
       },
     });
 

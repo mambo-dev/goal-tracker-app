@@ -1,4 +1,4 @@
-import { User } from "@prisma/client";
+import { Goal, SubGoal, User } from "@prisma/client";
 
 export type ServerResponse<T> = {
   error?: ZodIssues[] | HandleError[];
@@ -43,9 +43,3 @@ type NavList = {
   link: string;
   streak?: number;
 };
-
-export type GoalsWithSubGoals = Prisma.GoalGetPayload<{
-  include: {
-    goal_subgoals: true;
-  };
-}>;
