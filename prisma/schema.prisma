@@ -32,18 +32,29 @@ model Account {
 }
 
 model Goal {
-  goal_id                Int      @id @default(autoincrement())
-  goal_user              User     @relation(fields: [goal_user_id], references: [user_id], onDelete: Cascade)
+  goal_id                Int        @id @default(autoincrement())
+  goal_user              User       @relation(fields: [goal_user_id], references: [user_id], onDelete: Cascade)
   goal_user_id           Int
   goal_title             String
-  goal_type_timeline     DateTime // generateed based on the type of timeline
-  goal_previous_timeline DateTime
+  goal_description       String?
+  goal_type_timeline     DateTime?
+  goal_previous_timeline DateTime?
   goal_achieved          Boolean
-  goal_type              Type
-  goal_sub_goal          Goal?    @relation("GoalSubGoals", fields: [goal_sub_goal_id], references: [goal_id])
+  goal_target_value      Int?
+  goal_current_value     Int?
+  goal_type              Type?
+  goal_sub_goal          Goal?      @relation("GoalSubGoals", fields: [goal_sub_goal_id], references: [goal_id], onDelete: Cascade)
   goal_sub_goal_id       Int?
-  goal_sub_goals         Goal[]   @relation("GoalSubGoals")
-  goal_streak            Streak[]
+  goal_sub_goals         Goal[]     @relation("GoalSubGoals")
+  goal_progress          Progress[]
+}
+
+model Progress {
+  progress_id      Int   @id @default(autoincrement())
+  progress_goal    Goal? @relation(fields: [progress_goal_id], references: [goal_id], onDelete: Cascade)
+  progress_goal_id Int
+  progress_value   Int?
+  progress_date    Int // if this date is still current no streak adding or creation
 }
 
 enum Type {
@@ -54,14 +65,22 @@ enum Type {
 }
 
 model Streak {
-  streak_id            Int       @id @default(autoincrement())
-  streak_current_count Int       @default(0)
+  streak_id            Int               @id @default(autoincrement())
+  streak_current_count Int               @default(0)
   streak_type          Type
   streak_starttime     DateTime
   streak_endtime       DateTime?
-  streak_user          User      @relation(fields: [streak_user_id], references: [user_id], onDelete: Cascade)
+  streak_user          User              @relation(fields: [streak_user_id], references: [user_id], onDelete: Cascade)
   streak_user_id       Int
-  streak_goal          Goal      @relation(fields: [streak_goal_id], references: [goal_id], onDelete: Cascade)
-  streak_goal_id       Int       @unique
-  streak_updated_at    DateTime  @default(now()) @updatedAt
+  streak_updated_at    DateTime          @default(now()) @updatedAt
+  streak_analytics     AnalyticsTracker? @relation(fields: [streak_analytics_id], references: [analytics_id], onDelete: Cascade)
+  streak_analytics_id  Int?
+}
+
+model AnalyticsTracker {
+  analytics_id              Int      @id @default(autoincrement())
+  analytics_goals_achieved  Int      @default(0)
+  analytics_progress_logged Int      @default(0)
+  analytics_longest_streak  Int      @default(0)
+  analytics_streaks         Streak[]
 }
