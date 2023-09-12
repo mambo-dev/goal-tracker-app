@@ -11,13 +11,14 @@ datasource db {
 }
 
 model User {
-  user_id       Int      @id @default(autoincrement())
-  user_username String   @unique
-  user_email    String   @unique
-  user_password String
-  user_account  Account?
-  user_goals    Goal[]
-  user_streaks  Streak[]
+  user_id          Int                @id @default(autoincrement())
+  user_username    String             @unique
+  user_email       String             @unique
+  user_password    String
+  user_account     Account?
+  user_goals       Goal[]
+  user_streaks     Streak[]
+  AnalyticsTracker AnalyticsTracker[]
 }
 
 model Account {
@@ -90,6 +91,8 @@ model Streak {
 
 model AnalyticsTracker {
   analytics_id              Int      @id @default(autoincrement())
+  analytics_user            User     @relation(fields: [analytics_user_id], references: [user_id], onDelete: Cascade)
+  analytics_user_id         Int
   analytics_goals_achieved  Int      @default(0)
   analytics_progress_logged Int      @default(0)
   analytics_longest_streak  Int      @default(0)

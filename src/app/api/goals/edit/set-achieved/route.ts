@@ -48,9 +48,33 @@ export async function GET(
       );
     }
 
+    const user_analytics = await db.analyticsTracker.findUnique({
+      where: {
+        analytics_id: 1,
+      },
+    });
 
+    if (!user_analytics) {
+      throw new Error("failed to create analytics");
+    }
 
-   
+    const add_achieved_goals = (user_analytics.analytics_goals_achieved += 1);
+
+    await db.analyticsTracker.update({
+      where: {
+        analytics_id: user_analytics?.analytics_id,
+      },
+      data: {
+        analytics_goals_achieved: add_achieved_goals,
+      },
+    });
+
+    await db.goal.delete({
+      where: {
+        goal_id: findGoal.goal_id,
+      },
+    });
+
     return NextResponse.json(
       {
         data: true,
@@ -89,7 +113,6 @@ export async function GET(
     );
   }
 }
-
 
 function setNewTimeline(goalType: Type, goalTimeline: Date): Date {
   switch (goalType) {
