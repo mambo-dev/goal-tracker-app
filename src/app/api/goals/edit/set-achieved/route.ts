@@ -48,45 +48,9 @@ export async function GET(
       );
     }
 
-    //check whether its past the time of achievement then its too late and we end streak
-    const currentTime = new Date();
-    if (findGoal.goal_type_timeline > currentTime) {
-      const goalHasStreak = await db.streak.findUnique({
-        where: {
-          streak_goal_id: findGoal.goal_id,
-        },
-      });
 
-      if (goalHasStreak) {
-        await db.streak.update({
-          where: {
-            streak_goal_id: findGoal.goal_id,
-          },
-          data: {
-            streak_endtime: currentTime,
-          },
-        });
-      }
 
-      await updateGoal(findGoal);
-
-      return NextResponse.json(
-        {
-          data: true,
-          okay: true,
-        },
-        {
-          status: 200,
-        }
-      );
-    }
-
-    if (!findGoal.goal_achieved) {
-      await updateGoal(findGoal);
-    }
-
-    await updateOrCreateStreak(findGoal);
-
+   
     return NextResponse.json(
       {
         data: true,
@@ -126,71 +90,6 @@ export async function GET(
   }
 }
 
-async function updateOrCreateStreak(goal: Goal): Promise<boolean> {
-  try {
-    const goalHasStreak = await db.streak.findUnique({
-      where: {
-        streak_goal_id: goal.goal_id,
-      },
-    });
-
-    if (goalHasStreak && !goalHasStreak.streak_endtime) {
-      if (
-        goalHasStreak.streak_updated_at &&
-        goalHasStreak.streak_updated_at < goal.goal_previous_timeline
-      ) {
-        return true;
-      }
-
-      await db.streak.update({
-        where: {
-          streak_id: goalHasStreak.streak_id,
-        },
-        data: {
-          streak_current_count: (goalHasStreak.streak_current_count += 1),
-        },
-      });
-    } else {
-      await db.streak.create({
-        data: {
-          streak_starttime: new Date(),
-          streak_type: goal.goal_type,
-          streak_current_count: 1,
-          streak_goal: {
-            connect: {
-              goal_id: goal.goal_id,
-            },
-          },
-          streak_user: {
-            connect: {
-              user_id: goal.goal_user_id,
-            },
-          },
-        },
-      });
-    }
-    return true;
-  } catch (error) {
-    throw new Error("error updating streak");
-  }
-}
-
-async function updateGoal(goal: Goal) {
-  const updatedgoal = await db.goal.update({
-    where: {
-      goal_id: goal.goal_id,
-    },
-    data: {
-      goal_achieved: !goal.goal_achieved,
-      goal_previous_timeline: goal.goal_previous_timeline,
-      goal_type_timeline: setNewTimeline(
-        goal.goal_type,
-        goal.goal_type_timeline
-      ),
-    },
-  });
-  return updatedgoal;
-}
 
 function setNewTimeline(goalType: Type, goalTimeline: Date): Date {
   switch (goalType) {

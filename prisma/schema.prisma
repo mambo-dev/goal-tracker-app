@@ -32,29 +32,40 @@ model Account {
 }
 
 model Goal {
-  goal_id                Int        @id @default(autoincrement())
-  goal_user              User       @relation(fields: [goal_user_id], references: [user_id], onDelete: Cascade)
-  goal_user_id           Int
-  goal_title             String
-  goal_description       String?
-  goal_type_timeline     DateTime?
-  goal_previous_timeline DateTime?
-  goal_achieved          Boolean
-  goal_target_value      Int?
-  goal_current_value     Int?
-  goal_type              Type?
-  goal_sub_goal          Goal?      @relation("GoalSubGoals", fields: [goal_sub_goal_id], references: [goal_id], onDelete: Cascade)
-  goal_sub_goal_id       Int?
-  goal_sub_goals         Goal[]     @relation("GoalSubGoals")
-  goal_progress          Progress[]
+  goal_id          Int     @id @default(autoincrement())
+  goal_user        User    @relation(fields: [goal_user_id], references: [user_id], onDelete: Cascade)
+  goal_user_id     Int
+  goal_title       String
+  goal_description String?
+  goal_achieved    Boolean @default(false)
+  goal_sub_goal    Goal?   @relation("GoalSubGoals", fields: [goal_sub_goal_id], references: [goal_id], onDelete: Cascade)
+  goal_sub_goal_id Int?
+  goal_sub_goals   Goal[]  @relation("GoalSubGoals")
 }
 
-model Progress {
-  progress_id      Int   @id @default(autoincrement())
-  progress_goal    Goal? @relation(fields: [progress_goal_id], references: [goal_id], onDelete: Cascade)
-  progress_goal_id Int
-  progress_value   Int?
-  progress_date    Int // if this date is still current no streak adding or creation
+enum Target {
+  number
+  curency
+  milestone
+  done_not_done
+}
+
+model GoalTarget {
+  goal_target_id       Int           @id @default(autoincrement())
+  goal_target_type     Target
+  goal_target_value    Int?
+  goal_current_value   Int?
+  goal_target_achieved Boolean?
+  goal_target_date     DateTime      @default(now())
+  goal_target_tasks    TargetTasks[]
+}
+
+model TargetTasks {
+  target_tasks_id       Int        @id @default(autoincrement())
+  target_tasks_target   GoalTarget @relation(fields: [target_task_target_id], references: [goal_target_id], onDelete: Cascade)
+  target_task_target_id Int
+  target_task_name      String
+  target_task_done      Boolean
 }
 
 enum Type {
