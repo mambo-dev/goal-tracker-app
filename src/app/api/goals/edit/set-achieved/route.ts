@@ -30,6 +30,9 @@ export async function GET(
       where: {
         goal_id: goalId,
       },
+      include: {
+        goal_targets: true,
+      },
     });
 
     if (!findGoal) {
@@ -50,7 +53,7 @@ export async function GET(
 
     const user_analytics = await db.analyticsTracker.findUnique({
       where: {
-        analytics_id: 1,
+        analytics_user_id: user.user_id,
       },
     });
 
@@ -59,6 +62,11 @@ export async function GET(
     }
 
     const add_achieved_goals = (user_analytics.analytics_goals_achieved += 1);
+    const goal_targets = findGoal.goal_targets
+      ? findGoal.goal_targets.length
+      : 0;
+    const add_completed_targets = (user_analytics.analytics_targets_completed +=
+      goal_targets);
 
     await db.analyticsTracker.update({
       where: {
@@ -66,6 +74,7 @@ export async function GET(
       },
       data: {
         analytics_goals_achieved: add_achieved_goals,
+        analytics_targets_completed: add_completed_targets,
       },
     });
 

@@ -11,14 +11,14 @@ datasource db {
 }
 
 model User {
-  user_id          Int                @id @default(autoincrement())
-  user_username    String             @unique
-  user_email       String             @unique
-  user_password    String
-  user_account     Account?
-  user_goals       Goal[]
-  user_streaks     Streak[]
-  AnalyticsTracker AnalyticsTracker[]
+  user_id        Int                @id @default(autoincrement())
+  user_username  String             @unique
+  user_email     String             @unique
+  user_password  String
+  user_account   Account?
+  user_goals     Goal[]
+  user_streaks   Streak[]
+  user_analytics AnalyticsTracker[]
 }
 
 model Account {
@@ -33,15 +33,16 @@ model Account {
 }
 
 model Goal {
-  goal_id          Int     @id @default(autoincrement())
-  goal_user        User    @relation(fields: [goal_user_id], references: [user_id], onDelete: Cascade)
+  goal_id          Int          @id @default(autoincrement())
+  goal_user        User         @relation(fields: [goal_user_id], references: [user_id], onDelete: Cascade)
   goal_user_id     Int
   goal_title       String
   goal_description String?
-  goal_achieved    Boolean @default(false)
-  goal_sub_goal    Goal?   @relation("GoalSubGoals", fields: [goal_sub_goal_id], references: [goal_id], onDelete: Cascade)
+  goal_achieved    Boolean      @default(false)
+  goal_sub_goal    Goal?        @relation("GoalSubGoals", fields: [goal_sub_goal_id], references: [goal_id], onDelete: Cascade)
   goal_sub_goal_id Int?
-  goal_sub_goals   Goal[]  @relation("GoalSubGoals")
+  goal_sub_goals   Goal[]       @relation("GoalSubGoals")
+  goal_targets     GoalTarget[]
 }
 
 enum Target {
@@ -53,6 +54,8 @@ enum Target {
 
 model GoalTarget {
   goal_target_id       Int           @id @default(autoincrement())
+  goal_target_goal     Goal          @relation(fields: [goal_target_goal_id], references: [goal_id], onDelete: Cascade)
+  goal_target_goal_id  Int           @unique
   goal_target_type     Target
   goal_target_value    Int?
   goal_current_value   Int?
@@ -67,6 +70,7 @@ model TargetTasks {
   target_task_target_id Int
   target_task_name      String
   target_task_done      Boolean
+  target_task_achieved  Boolean    @default(false)
 }
 
 enum Type {
@@ -90,11 +94,11 @@ model Streak {
 }
 
 model AnalyticsTracker {
-  analytics_id              Int      @id @default(autoincrement())
-  analytics_user            User     @relation(fields: [analytics_user_id], references: [user_id], onDelete: Cascade)
-  analytics_user_id         Int
-  analytics_goals_achieved  Int      @default(0)
-  analytics_progress_logged Int      @default(0)
-  analytics_longest_streak  Int      @default(0)
-  analytics_streaks         Streak[]
+  analytics_id                Int      @id @default(autoincrement())
+  analytics_user              User     @relation(fields: [analytics_user_id], references: [user_id], onDelete: Cascade)
+  analytics_user_id           Int      @unique
+  analytics_goals_achieved    Int      @default(0)
+  analytics_targets_completed Int      @default(0)
+  analytics_longest_streak    Int      @default(0)
+  analytics_streaks           Streak[]
 }
