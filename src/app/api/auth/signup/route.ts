@@ -49,6 +49,9 @@ export async function POST(
         user_username: username,
         user_email: email,
         user_password: hash,
+        user_analytics: {
+          create: [],
+        },
       },
     });
 

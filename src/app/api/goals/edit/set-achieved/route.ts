@@ -58,7 +58,7 @@ export async function GET(
     });
 
     if (!user_analytics) {
-      throw new Error("failed to create analytics");
+      throw new Error("failed to create analytics on sign up");
     }
 
     const add_achieved_goals = (user_analytics.analytics_goals_achieved += 1);
