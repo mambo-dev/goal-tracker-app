@@ -27,17 +27,14 @@ export async function POST(
       );
     }
 
-    let { goalTitle, goalType } = createGoalSchema.parse(body);
-
-    let goalTypeTimeline: Date = assignTimeline(goalType);
+    let { goalTitle, goalDescription, goalTimeline } =
+      createGoalSchema.parse(body);
 
     await db.goal.create({
       data: {
         goal_title: goalTitle,
-        goal_achieved: false,
-        goal_type: goalType,
-        goal_type_timeline: goalTypeTimeline,
-        goal_previous_timeline: goalTypeTimeline,
+        goal_description: goalDescription,
+        goal_timeline: goalTimeline,
         goal_user: {
           connect: {
             user_id: user.user_id,
@@ -56,7 +53,6 @@ export async function POST(
       }
     );
   } catch (error) {
-    console.log(error);
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -64,7 +60,7 @@ export async function POST(
           okay: false,
         },
         {
-          status: 403,
+          status: 400,
         }
       );
     }

@@ -3,7 +3,8 @@ import { ServerResponse } from "@/lib/types";
 
 type GoalDetails = {
   goalTitle: string;
-  goalType: "daily" | "weekly" | "monthly" | "yearly";
+  goalDescription?: string;
+  goalTimeline?: Date;
 };
 
 export default async function createGoal(goalDetails: GoalDetails) {
