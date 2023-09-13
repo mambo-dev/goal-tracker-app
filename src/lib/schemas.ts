@@ -68,7 +68,6 @@ export const createGoalSchema = z.object({
 export const editGoalSchema = z.object({
   goalTitle: z.string().optional(),
   goalDescription: z.string().optional(),
-  goalAchieved: z.boolean().default(false),
   goalTimeline: z.date().optional(),
 });
 

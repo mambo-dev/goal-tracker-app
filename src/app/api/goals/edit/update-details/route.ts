@@ -1,10 +1,9 @@
 import { userExistsAndAuthorized } from "@/lib/auth";
 import { db } from "@/lib/prisma";
-import { createGoalSchema, editGoalSchema } from "@/lib/schemas";
+import { editGoalSchema } from "@/lib/schemas";
 import { ServerResponse } from "@/lib/types";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { assignTimeline } from "../../validatetype";
 import { getIdFromParams } from "@/lib/utils";
 
 export async function PUT(
@@ -31,9 +30,6 @@ export async function PUT(
       where: {
         goal_id: goalId,
       },
-      include: {
-        goal_subgoals: true,
-      },
     });
 
     if (!findGoal) {
@@ -52,28 +48,10 @@ export async function PUT(
       );
     }
 
-    let { goalTitle, goalUserTimeline } = editGoalSchema.parse({
+    let { goalTitle, goalDescription, goalTimeline } = editGoalSchema.parse({
       ...body,
-      goalUserTimeline: new Date(body.goalUserTimeline),
+      goalTimeline: body.goalTimeline ? new Date(body.goalTimeline) : undefined,
     });
-
-    let goalTypeTimeline: Date = assignTimeline(findGoal.goal_type);
-
-    if (goalUserTimeline > goalTypeTimeline) {
-      return NextResponse.json(
-        {
-          error: [
-            {
-              message: `sorry cannot update that timeline under ${findGoal.goal_type} plan`,
-            },
-          ],
-          okay: false,
-        },
-        {
-          status: 403,
-        }
-      );
-    }
 
     await db.goal.update({
       where: {
@@ -81,9 +59,8 @@ export async function PUT(
       },
       data: {
         goal_title: goalTitle,
-        goal_achieved: false,
-        goal_type_timeline: goalTypeTimeline,
-        goal_user_timeline: goalUserTimeline,
+        goal_description: goalDescription,
+        goal_timeline: goalTimeline,
         goal_user: {
           connect: {
             user_id: user.user_id,
