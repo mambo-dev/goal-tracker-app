@@ -25,7 +25,7 @@ export default function DisplayGoals({ goals }: Props) {
   }
 
   return (
-    <div className="px-2 md:container w-full gap-4 h-full py-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+    <div className="px-2 md:container w-full gap-4 h-full py-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
       {goals.map((goal) => {
         return <DisplayGoal key={goal.goal_id} goal={goal} />;
       })}

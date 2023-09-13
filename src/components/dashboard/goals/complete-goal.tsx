@@ -48,7 +48,7 @@ export default function CompleteGoal({ goalId }: Props) {
   return (
     <AlertDialogComponent
       title="Are you sure ?"
-      description="Once you mark this goal as achieved we will delete it from our database"
+      description="Once you mark this goal as achieved we will delete it from our database! "
       trigger={
         <button className="inline-flex items-center justify-cente r outline-none">
           <Check className="h-5 w-5 text-green-300 hover:text-green-500" />

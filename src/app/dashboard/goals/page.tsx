@@ -6,7 +6,7 @@ import React from "react";
 
 type Props = {};
 
-export default async function DailyGoalsPage({}: Props) {
+export default async function GoalsPage({}: Props) {
   const { user } = await userExistsAndAuthorized();
 
   if (!user) {

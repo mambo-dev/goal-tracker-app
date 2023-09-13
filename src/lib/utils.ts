@@ -11,6 +11,13 @@ export function getIdFromParams(paramName: string, url: string) {
   return Number(id);
 }
 
+export function getIdFromDynamicRoute(slug: string) {
+  if (!slug || isNaN(Number(slug))) {
+    return false;
+  }
+  return Number(slug);
+}
+
 export function getWebUrl() {
   if (!process.env.WEB_URL) {
     throw new Error("set the current web url");
@@ -30,4 +37,23 @@ export async function getAllGoals(userId: number): Promise<Goal[]> {
   } catch (error: any) {
     throw new Error(error.message);
   }
+}
+
+export async function getSingleGoal(goalId: number): Promise<Goal | null> {
+  try {
+    const goal = await db.goal.findUnique({
+      where: {
+        goal_id: goalId,
+      },
+    });
+
+    return goal;
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+}
+
+export function truncate(str: string, maxLength: number) {
+  if (str.length <= maxLength) return str;
+  return str.substring(0, maxLength - 3) + "...";
 }
