@@ -79,6 +79,7 @@ export async function PUT(
       }
     );
   } catch (error) {
+    console.log(error);
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {

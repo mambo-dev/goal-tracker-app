@@ -50,9 +50,9 @@ export default function CompleteGoal({ goalId }: Props) {
       title="Are you sure ?"
       description="Once you mark this goal as achieved we will delete it from our database"
       trigger={
-        <button
-          className={`inline-flex items-center justify-center h-full w-full border-2  focus:border-green-500 focus:text-green-700 rounded-full border-slate-400 text-slate-700  `}
-        />
+        <button className="inline-flex items-center justify-cente r outline-none">
+          <Check className="h-5 w-5 text-green-300 hover:text-green-500" />
+        </button>
       }
       action={
         <button

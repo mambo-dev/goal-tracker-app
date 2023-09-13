@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import CompleteGoal from "./complete-goal";
 import { Goal } from "@prisma/client";
 import DeleteGoal from "./delete-goal";
+import UpdateGoal from "./update-goal-details";
 
 type Props = {
   goal: Goal;
@@ -12,9 +13,6 @@ type Props = {
 export default function DisplayGoal({ goal }: Props) {
   return (
     <div className="p-2 rounded-lg shadow border border-gray-300 w-full flex gap-2 items-start jusify-center">
-      <div className="mt-0 w-5 h-5">
-        <CompleteGoal goalId={goal.goal_id} />
-      </div>
       <div className=" flex flex-1 items-start jusify-center flex-col ">
         <div className="w-fit h-fit relative">
           <h4
@@ -34,8 +32,10 @@ export default function DisplayGoal({ goal }: Props) {
           </span>
         )}
       </div>
-      <div className="mt-0 w-5 h-5 flex items-center gap-2 justify-center">
+      <div className="mt-0  flex items-center gap-2 justify-center">
+        <UpdateGoal goal={goal} />
         <DeleteGoal goalId={goal.goal_id} />
+        <CompleteGoal goalId={goal.goal_id} />
       </div>
     </div>
   );
