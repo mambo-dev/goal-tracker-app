@@ -3,6 +3,7 @@ import { format, sub } from "date-fns";
 import React, { useState } from "react";
 import CompleteGoal from "./complete-goal";
 import { Goal } from "@prisma/client";
+import DeleteGoal from "./delete-goal";
 
 type Props = {
   goal: Goal;
@@ -32,6 +33,9 @@ export default function DisplayGoal({ goal }: Props) {
             {format(new Date(goal.goal_timeline), "Pp")}
           </span>
         )}
+      </div>
+      <div className="mt-0 w-5 h-5 flex items-center gap-2 justify-center">
+        <DeleteGoal goalId={goal.goal_id} />
       </div>
     </div>
   );

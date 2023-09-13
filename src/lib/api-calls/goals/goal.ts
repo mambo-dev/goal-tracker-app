@@ -49,3 +49,24 @@ export async function setAchieved(goalId: number) {
 
   return data.data;
 }
+
+export async function deleteGoal(goalId: number) {
+  const res = await fetch(`/api/goals/edit/delete-goal?goalId=${goalId}`, {
+    method: "DELETE",
+    headers: {
+      "Content-type": "application/json",
+    },
+  });
+
+  const data = (await res.json()) as ServerResponse<boolean>;
+
+  if (!data.okay) {
+    if (data.error instanceof Array) {
+      throw new Error(JSON.stringify(data.error));
+    }
+
+    throw new Error(data.error ?? "something unexpected happened");
+  }
+
+  return data.data;
+}
