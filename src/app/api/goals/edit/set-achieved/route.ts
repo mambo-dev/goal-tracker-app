@@ -26,7 +26,7 @@ export async function GET(
       );
     }
 
-    const findGoal = await db.goal.findUnique({
+    const findGoal = await db.goal.findFirst({
       where: {
         goal_id: goalId,
       },
@@ -70,7 +70,7 @@ export async function GET(
 
     await db.analyticsTracker.update({
       where: {
-        analytics_id: user_analytics?.analytics_id,
+        analytics_id: user_analytics.analytics_id,
       },
       data: {
         analytics_goals_achieved: add_achieved_goals,

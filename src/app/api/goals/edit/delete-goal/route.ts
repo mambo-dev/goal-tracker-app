@@ -1,18 +1,16 @@
 import { userExistsAndAuthorized } from "@/lib/auth";
 import { db } from "@/lib/prisma";
-import { createGoalSchema } from "@/lib/schemas";
 import { ServerResponse } from "@/lib/types";
-import { addDays, addMonths, addWeeks, addYears } from "date-fns";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { assignTimeline } from "../validatetype";
+import { getIdFromParams } from "@/lib/utils";
+import { Goal, Type } from "@prisma/client";
 
-export async function POST(
+export async function DELETE(
   request: Request
 ): Promise<NextResponse<ServerResponse<boolean>>> {
   try {
-    const body = await request.json();
-
+    const goalId = getIdFromParams("goalId", request.url);
     const { user, message } = await userExistsAndAuthorized();
 
     if (!user) {
@@ -27,21 +25,34 @@ export async function POST(
       );
     }
 
-    let { goalTitle, goalDescription, goalTimeline } = createGoalSchema.parse({
-      ...body,
-      goalTimeline: body.goalTimeline ? new Date(body.goalTimeline) : undefined,
+    const findGoal = await db.goal.findFirst({
+      where: {
+        goal_id: goalId,
+      },
+      include: {
+        goal_targets: true,
+      },
     });
 
-    await db.goal.create({
-      data: {
-        goal_title: goalTitle,
-        goal_description: goalDescription,
-        goal_timeline: goalTimeline,
-        goal_user: {
-          connect: {
-            user_id: user.user_id,
-          },
+    if (!findGoal) {
+      return NextResponse.json(
+        {
+          error: [
+            {
+              message: "Oops this goal may have been  deleted",
+            },
+          ],
+          okay: false,
         },
+        {
+          status: 403,
+        }
+      );
+    }
+
+    await db.goal.delete({
+      where: {
+        goal_id: findGoal.goal_id,
       },
     });
 
@@ -63,7 +74,7 @@ export async function POST(
           okay: false,
         },
         {
-          status: 400,
+          status: 403,
         }
       );
     }
