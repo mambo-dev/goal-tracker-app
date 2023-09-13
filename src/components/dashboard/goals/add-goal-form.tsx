@@ -20,7 +20,7 @@ export default function AddGoalForm() {
   const [timeLine, setTimeline] = useState<Date | undefined>(new Date());
   const [initialState, setInitialState] = useState({
     title: "",
-    description: hasDescription ? "" : undefined,
+    description: "",
   });
   const router = useRouter();
   const { handleError } = useError();

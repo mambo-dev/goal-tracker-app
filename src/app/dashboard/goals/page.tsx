@@ -1,11 +1,11 @@
 import DisplayGoals from "@/components/dashboard/goals/display-goals";
-import { getGoalsByType } from "@/lib/utils";
+import { getAllGoals } from "@/lib/utils";
 import React from "react";
 
 type Props = {};
 
 export default async function DailyGoalsPage({}: Props) {
-  const goals = await getGoalsByType("daily");
+  const goals = await getAllGoals();
 
   return <DisplayGoals goals={goals} />;
 }

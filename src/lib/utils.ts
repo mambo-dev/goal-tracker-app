@@ -18,13 +18,9 @@ export function getWebUrl() {
   return process.env.WEB_URL;
 }
 
-export async function getGoalsByType(type: Type): Promise<Goal[]> {
+export async function getAllGoals(): Promise<Goal[]> {
   try {
-    const goals = await db.goal.findMany({
-      where: {
-        goal_type: type,
-      },
-    });
+    const goals = await db.goal.findMany({});
 
     return goals;
   } catch (error: any) {

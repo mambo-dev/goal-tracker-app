@@ -27,8 +27,10 @@ export async function POST(
       );
     }
 
-    let { goalTitle, goalDescription, goalTimeline } =
-      createGoalSchema.parse(body);
+    let { goalTitle, goalDescription, goalTimeline } = createGoalSchema.parse({
+      ...body,
+      goalTimeline: new Date(body.goalTimeline),
+    });
 
     await db.goal.create({
       data: {
@@ -53,6 +55,7 @@ export async function POST(
       }
     );
   } catch (error) {
+    console.log(error);
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
