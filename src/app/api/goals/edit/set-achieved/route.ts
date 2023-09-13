@@ -51,6 +51,23 @@ export async function GET(
       );
     }
 
+    if (findGoal.goal_user_id !== user.user_id) {
+      return NextResponse.json(
+        {
+          error: [
+            {
+              message:
+                "This goal does not belong to you, you cannot delete this goal",
+            },
+          ],
+          okay: false,
+        },
+        {
+          status: 403,
+        }
+      );
+    }
+
     const user_analytics = await db.analyticsTracker.findUnique({
       where: {
         analytics_user_id: user.user_id,

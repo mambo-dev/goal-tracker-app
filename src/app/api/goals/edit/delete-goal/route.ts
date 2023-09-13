@@ -29,9 +29,6 @@ export async function DELETE(
       where: {
         goal_id: goalId,
       },
-      include: {
-        goal_targets: true,
-      },
     });
 
     if (!findGoal) {
@@ -40,6 +37,23 @@ export async function DELETE(
           error: [
             {
               message: "Oops this goal may have been  deleted",
+            },
+          ],
+          okay: false,
+        },
+        {
+          status: 403,
+        }
+      );
+    }
+
+    if (findGoal.goal_user_id !== user.user_id) {
+      return NextResponse.json(
+        {
+          error: [
+            {
+              message:
+                "This goal does not belong to you, you cannot delete this goal",
             },
           ],
           okay: false,
