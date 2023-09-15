@@ -43,3 +43,4 @@ type NavList = {
   link: string;
   streak?: number;
 };
+type SingleGoal = Goal;

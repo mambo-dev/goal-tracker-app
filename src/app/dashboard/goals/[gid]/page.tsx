@@ -1,5 +1,6 @@
 import { getIdFromDynamicRoute, getSingleGoal } from "@/lib/utils";
 import HandleError from "./error";
+import GoalPage from "@/components/dashboard/goals/goal-page";
 
 export default async function GoalsPage({
   params,
@@ -18,5 +19,5 @@ export default async function GoalsPage({
     throw new Error("Did not find goal! it may have been deleted or moved");
   }
 
-  return <p>{goal.goal_title}</p>;
+  return <GoalPage goal={goal} />;
 }
