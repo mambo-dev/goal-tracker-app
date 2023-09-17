@@ -67,6 +67,7 @@ const RadioButton = ({
   return (
     <button
       type="button"
+      id={id}
       onClick={() => handleSelected(option)}
       className={`outline-none hover:bg-neutral-100 transition-all focus:shadow-sm flex items-center gap-y-3 flex-col py-2 px-2 border border-gray-300 rounded-md ${
         option.selected ? "bg-neutral-50" : ""
@@ -74,7 +75,7 @@ const RadioButton = ({
     >
       <div className="h-4 w-4 rounded-full border-2 border-gray-300 flex items-center justify-center">
         {option.selected && (
-          <div className="w-3 h-3 rounded-full bg-purple-500" />
+          <div className="w-2 h-2 rounded-full bg-purple-500" />
         )}
       </div>
       <label
