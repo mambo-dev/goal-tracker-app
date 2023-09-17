@@ -57,6 +57,7 @@ model GoalTarget {
   goal_target_id       Int           @id @default(autoincrement())
   goal_target_goal     Goal          @relation(fields: [goal_target_goal_id], references: [goal_id], onDelete: Cascade)
   goal_target_goal_id  Int           @unique
+  goal_target_name     String
   goal_target_type     Target
   goal_target_value    Int?
   goal_current_value   Int?

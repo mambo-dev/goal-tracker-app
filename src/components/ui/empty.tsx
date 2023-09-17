@@ -13,8 +13,10 @@ type Props = {
 export default function EmptyState({ icon, title, subTitle, action }: Props) {
   return (
     <div className="max-w-full w-full md:w-[700px] mt-20 px-2 flex flex-col  gap-4 items-center py-4 border-2 border-dashed border-slate-300 rounded-md mx-auto   ">
-      <div className="text-6xl w-fit text-slate-700"> {icon}</div>
-      <Heading size="xs">{title}</Heading>
+      <div className="text-6xl w-fit  text-slate-700"> {icon}</div>
+      <Heading size="xs" className="text-slate-800 font-bold">
+        {title}
+      </Heading>
       <Paragraph size="sm">{subTitle}</Paragraph>
       <div className="w-32">{action}</div>
     </div>
