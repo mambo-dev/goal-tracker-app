@@ -3,6 +3,7 @@ import DashboardMainNav from "@/components/dashboard/dashboard-nav";
 import { userExistsAndAuthorized } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Toaster } from "react-hot-toast";
+export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Goalee | Dashboard",

@@ -3,6 +3,7 @@ import AccountNavBar from "@/components/accounts/account-nav-bar";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Toaster } from "react-hot-toast";
+export const dynamic = "force-dynamic";
 
 const inter = Inter({ subsets: ["latin"] });
 
