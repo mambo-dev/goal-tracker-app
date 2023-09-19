@@ -7,6 +7,7 @@ import { Target } from "@prisma/client";
 import React, { useState } from "react";
 import TargetType from "./target-type";
 import FormHeader from "@/components/ui/form-header";
+import { toast } from "@/components/ui/toast";
 
 type Props = {};
 
@@ -62,6 +63,20 @@ function NewTargetForm() {
       selected: false,
     },
   ]);
+  const findDoneNotDone = options.find(
+    (option) => option.id === "done_not_done"
+  );
+
+  if (!findDoneNotDone) {
+    throw new Error("done not done is undefined ");
+  }
+
+  const [doneNotDone, setDoneNotDone] = useState<boolean>(
+    findDoneNotDone.selected
+  );
+
+  console.log(doneNotDone, findDoneNotDone.selected);
+
   return (
     <form className="flex flex-col items-center gap-2">
       <Input label="Target" placeholder="name your target" />

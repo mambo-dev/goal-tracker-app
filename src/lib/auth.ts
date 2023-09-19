@@ -50,74 +50,79 @@ export default async function verifyAuth(
       },
     };
   } catch (error: any) {
-    throw new Error(error.message);
+    throw new Error(error);
   }
 }
 
 export async function userExistsAndAuthorized(): Promise<UserExistsAndAuthorized> {
-  const cookie = cookies();
+  try {
+    const cookie = cookies();
 
-  const access_token = cookie.get("access_token");
+    const access_token = cookie.get("access_token");
 
-  if (!cookie) {
-    return {
-      user: null,
-      message: "sorry try signing in again",
-    };
-  }
+    if (!cookie) {
+      return {
+        user: null,
+        message: "sorry try signing in again",
+      };
+    }
 
-  const { user, error } = await verifyAuth(access_token?.value);
+    const { user, error } = await verifyAuth(access_token?.value);
 
-  if (error || !user) {
-    return {
-      user: null,
-      message: error,
-    };
-  }
+    if (error || !user) {
+      return {
+        user: null,
+        message: error,
+      };
+    }
 
-  const findUser = await db.user.findUnique({
-    where: {
-      user_id: user.user_id,
-    },
-    include: {
-      user_account: {
-        select: {
-          account_verified: true,
-          account_two_factor: true,
-          account_reset_password_code: false,
-          account_id: false,
-          account_user: false,
-          account_two_factor_code: false,
-          account_verified_code: false,
+    const findUser = await db.user.findUnique({
+      where: {
+        user_id: user.user_id,
+      },
+      include: {
+        user_account: {
+          select: {
+            account_verified: true,
+            account_two_factor: true,
+            account_reset_password_code: false,
+            account_id: false,
+            account_user: false,
+            account_two_factor_code: false,
+            account_verified_code: false,
+          },
         },
       },
-    },
-  });
+    });
 
-  if (!findUser) {
-    return {
-      user: null,
-      message: "could not find user try signing up first",
+    if (!findUser) {
+      return {
+        user: null,
+        message: "could not find user try signing up first",
+      };
+    }
+
+    if (!findUser.user_account) {
+      return {
+        user: null,
+        message: "could not find an account associated with this user",
+      };
+    }
+
+    const returnUser = {
+      user_id: findUser.user_id,
+      user_username: findUser.user_username,
+      user_email: findUser.user_email,
+      user_password: findUser.user_password,
+      account_verified: findUser.user_account.account_verified,
+      account_two_factor: findUser.user_account.account_two_factor,
     };
-  }
 
-  if (!findUser.user_account) {
     return {
-      user: null,
-      message: "could not find an account associated with this user",
+      user: returnUser,
     };
+  } catch (error: any) {
+    console.log(error);
+    throw new Error(error.message);
   }
-
-  const returnUser = {
-    user_id: findUser.user_id,
-    user_username: findUser.user_username,
-    user_email: findUser.user_email,
-    user_password: findUser.user_password,
-    account_verified: findUser.user_account.account_verified,
-    account_two_factor: findUser.user_account.account_two_factor,
-  };
-
-  return {
-    user: returnUser,
-  };
 }
