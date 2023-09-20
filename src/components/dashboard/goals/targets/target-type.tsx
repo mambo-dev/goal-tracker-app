@@ -2,23 +2,43 @@
 import { Input } from "@/components/ui/input";
 import { Target } from "@prisma/client";
 import { ArrowRight, Plus, PlusCircle, X } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 type Props = {
   target: Target;
+  numericTarget: {
+    startValue: number;
+    endValue: number;
+  };
+  setNumericTarget: React.Dispatch<
+    React.SetStateAction<{
+      startValue: number;
+      endValue: number;
+    }>
+  >;
+  currencyTarget: {
+    startValue: number;
+    endValue: number;
+  };
+  setCurrencyTarget: React.Dispatch<
+    React.SetStateAction<{
+      startValue: number;
+      endValue: number;
+    }>
+  >;
+  mileStones: { name: string }[];
+  setMileStones: React.Dispatch<React.SetStateAction<{ name: string }[]>>;
 };
 
-export default function TargetType({ target }: Props) {
-  const [numericTarget, setNumericTarget] = useState({
-    startValue: 0,
-    endValue: 1,
-  });
-  const [currencyTarget, setCurrencyTarget] = useState({
-    startValue: 0,
-    endValue: 1,
-  });
-  const [mileStones, setMileStones] = useState([{ name: "" }]);
-
+export default function TargetType({
+  target,
+  currencyTarget,
+  setCurrencyTarget,
+  numericTarget,
+  setNumericTarget,
+  mileStones,
+  setMileStones,
+}: Props) {
   switch (target) {
     case "curency":
       return (
@@ -177,15 +197,20 @@ function MileStone({
 }) {
   const [mileStoneName, setMileStoneName] = useState({ name: "" });
   return (
-    <div className="w-full flex items-center flex-col justify-center">
+    <div className="w-full flex items-center flex-col justify-center gap-3">
       <div className="flex items-center w-full gap-3">
         <Input
+          name="mileStoneName"
+          placeholder="enter the milestone name"
           value={mileStoneName.name}
           onChange={(e) => setMileStoneName({ name: e.target.value })}
         />
         <button
+          type="button"
           className="w-fit h-fit py-2"
+          disabled={mileStoneName.name.trim().length <= 0}
           onClick={() => {
+            setMileStoneName({ name: "" });
             setMileStones([...mileStones, mileStoneName]);
           }}
         >
@@ -193,26 +218,33 @@ function MileStone({
         </button>
       </div>
       <div className="grid grid-cols-1 w-full gap-4">
-        {mileStones.map((mileStone, index) => (
-          <div
-            className="w-full border rounded-md border-gray-300 shadow-sm py-2 px-2 flex items-center justify-between"
-            key={index}
-          >
-            <span className="text-sm text-slate-700 font-medium">
-              {mileStone.name}
-            </span>
-            <button
-              onClick={() => {
-                setMileStones(
-                  mileStones.filter((mileStone) => !mileStone.name)
-                );
-              }}
-              className="outline-none w-fit h-fit "
-            >
-              <X className="h-4 w-4 text-red-400 hover:text-red-500" />
-            </button>
-          </div>
-        ))}
+        {mileStones.map(
+          (mileStone, index) =>
+            mileStone.name.trim().length > 0 && (
+              <div
+                className="w-full border rounded-md border-gray-300 shadow-sm py-2 px-2 flex items-center justify-between"
+                key={index}
+              >
+                <span className="text-sm text-slate-700 font-medium">
+                  {mileStone.name}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMileStones(
+                      mileStones.filter(
+                        (filterMilestone) =>
+                          filterMilestone.name !== mileStone.name
+                      )
+                    );
+                  }}
+                  className="outline-none w-fit h-fit "
+                >
+                  <X className="h-4 w-4 text-red-400 hover:text-red-500" />
+                </button>
+              </div>
+            )
+        )}
       </div>
     </div>
   );

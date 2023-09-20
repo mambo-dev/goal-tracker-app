@@ -88,3 +88,40 @@ export const editSubGoalSchema = z.object({
   subGoalTimeline: z.date().optional(),
   subGoalAchieved: z.boolean().default(true),
 });
+
+export const createTargetSchema = z.object({
+  targetType: z.enum(["number", "curency", "milestone", "done_not_done"], {
+    required_error: "a target type must be provided",
+  }),
+  targetName: z
+    .string({ required_error: "the name of the target must be provided" })
+    .min(1, "please enter a target name"),
+  currencyTarget: z
+    .object({
+      startValue: z.number({
+        required_error: "please provide an end value",
+      }),
+      endValue: z.number({
+        required_error: "please provide an end value",
+      }),
+    })
+    .optional(),
+  numericTarget: z
+    .object({
+      startValue: z.number({
+        required_error: "please provide an end value",
+      }),
+      endValue: z.number({
+        required_error: "please provide an end value",
+      }),
+    })
+    .optional(),
+  mileStones: z
+    .array(
+      z.object({
+        name: z.string().min(1, "please provide a name for your milestone"),
+      })
+    )
+    .optional(),
+  doneNotDone: z.boolean().optional(),
+});

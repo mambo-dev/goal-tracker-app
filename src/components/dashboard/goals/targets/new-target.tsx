@@ -4,10 +4,13 @@ import { Input } from "@/components/ui/input";
 import Modal from "@/components/ui/modals";
 import RadioButton from "@/components/ui/radio-button";
 import { Target } from "@prisma/client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import TargetType from "./target-type";
 import FormHeader from "@/components/ui/form-header";
 import { toast } from "@/components/ui/toast";
+import useError from "@/components/hooks/error";
+import { createTargetSchema } from "@/lib/schemas";
+import { Loader2 } from "lucide-react";
 
 type Props = {};
 
@@ -28,7 +31,18 @@ export default function NewTarget({}: Props) {
 }
 
 function NewTargetForm() {
-  const [targetType, setTargetType] = useState<Target>("curency");
+  const [targetType, setTargetType] = useState<Target>("number");
+  const [targetName, setTargetName] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [numericTarget, setNumericTarget] = useState({
+    startValue: 0,
+    endValue: 1,
+  });
+  const [currencyTarget, setCurrencyTarget] = useState({
+    startValue: 0,
+    endValue: 1,
+  });
+  const [mileStones, setMileStones] = useState<{ name: string }[]>([]);
 
   const [options, setOptions] = useState<
     {
@@ -39,17 +53,18 @@ function NewTargetForm() {
     }[]
   >([
     {
+      id: "number",
+      label: "Number",
+      name: "number",
+      selected: true,
+    },
+    {
       id: "curency",
       label: "Currency",
       name: "currency",
       selected: false,
     },
-    {
-      id: "milestone",
-      label: "Milestone",
-      name: "milestone",
-      selected: false,
-    },
+
     {
       id: "done_not_done",
       label: "done/not done",
@@ -57,9 +72,9 @@ function NewTargetForm() {
       selected: false,
     },
     {
-      id: "number",
-      label: "Number",
-      name: "number",
+      id: "milestone",
+      label: "Milestone",
+      name: "milestone",
       selected: false,
     },
   ]);
@@ -70,16 +85,45 @@ function NewTargetForm() {
   if (!findDoneNotDone) {
     throw new Error("contact server admin to fix this error");
   }
+  const { handleError } = useError();
+  const [doneNotDone, setDoneNotDone] = useState<boolean>(false);
 
-  const [doneNotDone, setDoneNotDone] = useState<boolean>(
-    findDoneNotDone.selected
-  );
+  useEffect(() => {
+    setDoneNotDone(findDoneNotDone.selected);
+  }, [findDoneNotDone.selected]);
 
-  console.log(doneNotDone, findDoneNotDone.selected);
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      const targetDetails = createTargetSchema.parse({
+        currencyTarget,
+        numericTarget,
+        targetType,
+        mileStones,
+        doneNotDone,
+        targetName,
+      });
+
+      toast({
+        title: "Success setting your target",
+        message: "You have succesfully set your target",
+      });
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   return (
-    <form className="flex flex-col items-center gap-2">
-      <Input label="Target" placeholder="name your target" />
+    <form onSubmit={handleSubmit} className="flex flex-col items-center gap-2">
+      <Input
+        label="Target"
+        placeholder="name your target"
+        value={targetName}
+        onChange={(e) => setTargetName(e.target.value)}
+      />
       <div className="flex flex-col gap-2 w-full ">
         <div className="w-fit mr-auto flex flex-col space-y-1.5 text-center sm:text-left ">
           <h4 className="text-sm font-medium text-slate-800 leading-none tracking-tight">
@@ -108,7 +152,22 @@ function NewTargetForm() {
         </div>
       </div>
 
-      <TargetType target={targetType} />
+      <TargetType
+        numericTarget={numericTarget}
+        setNumericTarget={setNumericTarget}
+        currencyTarget={currencyTarget}
+        setCurrencyTarget={setCurrencyTarget}
+        mileStones={mileStones}
+        setMileStones={setMileStones}
+        target={targetType}
+      />
+
+      <div className="w-24 ml-auto">
+        <button className="h-10  rounded-md shadow-sm text-white text-sm    outline-none py-2 px-3 w-full inline-flex items-center justify-center bg-purple-500 hover:bg-purple-600 disabled:bg-purple-400 disabled:bg-opacity-80 focus:shadow-purple-300 ">
+          {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          submit
+        </button>
+      </div>
     </form>
   );
 }
