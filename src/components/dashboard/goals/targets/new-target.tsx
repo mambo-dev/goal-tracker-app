@@ -11,6 +11,7 @@ import { toast } from "@/components/ui/toast";
 import useError from "@/components/hooks/error";
 import { createTargetSchema } from "@/lib/schemas";
 import { Loader2 } from "lucide-react";
+import fetchDataFromApi from "@/lib/api-calls/fetchData";
 
 type Props = {};
 
@@ -103,6 +104,12 @@ function NewTargetForm() {
         mileStones,
         doneNotDone,
         targetName,
+      });
+
+      await fetchDataFromApi({
+        method: "POST",
+        url: `/api/goals/targets/new`,
+        body: JSON.stringify(targetDetails),
       });
 
       toast({
