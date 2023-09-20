@@ -68,7 +68,7 @@ function NewTargetForm() {
   );
 
   if (!findDoneNotDone) {
-    throw new Error("done not done is undefined ");
+    throw new Error("contact server admin to fix this error");
   }
 
   const [doneNotDone, setDoneNotDone] = useState<boolean>(

@@ -1,7 +1,7 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { Target } from "@prisma/client";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Plus, PlusCircle, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 type Props = {
@@ -17,7 +17,7 @@ export default function TargetType({ target }: Props) {
     startValue: 0,
     endValue: 1,
   });
-  const [milestone, setMileStone] = useState([{ name: "" }]);
+  const [mileStones, setMileStones] = useState([{ name: "" }]);
 
   switch (target) {
     case "curency":
@@ -30,7 +30,9 @@ export default function TargetType({ target }: Props) {
     case "done_not_done":
       return <DoneNotDoneTarget />;
     case "milestone":
-      return <Milestone />;
+      return (
+        <MileStone mileStones={mileStones} setMileStones={setMileStones} />
+      );
     case "number":
       return (
         <NumericTarget
@@ -166,6 +168,52 @@ function DoneNotDoneTarget() {
   );
 }
 
-function Milestone() {
-  return <div>milestone</div>;
+function MileStone({
+  mileStones,
+  setMileStones,
+}: {
+  mileStones: { name: string }[];
+  setMileStones: React.Dispatch<React.SetStateAction<{ name: string }[]>>;
+}) {
+  const [mileStoneName, setMileStoneName] = useState({ name: "" });
+  return (
+    <div className="w-full flex items-center flex-col justify-center">
+      <div className="flex items-center w-full gap-3">
+        <Input
+          value={mileStoneName.name}
+          onChange={(e) => setMileStoneName({ name: e.target.value })}
+        />
+        <button
+          className="w-fit h-fit py-2"
+          onClick={() => {
+            setMileStones([...mileStones, mileStoneName]);
+          }}
+        >
+          <PlusCircle className="h-5 w-5 text-slate-400" />
+        </button>
+      </div>
+      <div className="grid grid-cols-1 w-full gap-4">
+        {mileStones.map((mileStone, index) => (
+          <div
+            className="w-full border rounded-md border-gray-300 shadow-sm py-2 px-2 flex items-center justify-between"
+            key={index}
+          >
+            <span className="text-sm text-slate-700 font-medium">
+              {mileStone.name}
+            </span>
+            <button
+              onClick={() => {
+                setMileStones(
+                  mileStones.filter((mileStone) => !mileStone.name)
+                );
+              }}
+              className="outline-none w-fit h-fit "
+            >
+              <X className="h-4 w-4 text-red-400 hover:text-red-500" />
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
