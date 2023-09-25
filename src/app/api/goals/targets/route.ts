@@ -11,7 +11,7 @@ export async function POST(
   request: Request
 ): Promise<NextResponse<ServerResponse<boolean>>> {
   try {
-    const body = request.json();
+    const body = await request.json();
     const { user, message } = await userExistsAndAuthorized();
 
     const goal_id = getIdFromParams("goal_id", request.url);

@@ -13,9 +13,11 @@ import { createTargetSchema } from "@/lib/schemas";
 import { Loader2 } from "lucide-react";
 import fetchDataFromApi from "@/lib/api-calls/fetchData";
 
-type Props = {};
+type Props = {
+  goalId: number;
+};
 
-export default function NewTarget({}: Props) {
+export default function NewTarget({ goalId }: Props) {
   return (
     <Modal
       contentClassName="max-w-xl"
@@ -26,12 +28,12 @@ export default function NewTarget({}: Props) {
       }
       title="Set your new targets"
     >
-      <NewTargetForm />
+      <NewTargetForm goalId={goalId} />
     </Modal>
   );
 }
 
-function NewTargetForm() {
+function NewTargetForm({ goalId }: { goalId: number }) {
   const [targetType, setTargetType] = useState<Target>("number");
   const [targetName, setTargetName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -105,10 +107,9 @@ function NewTargetForm() {
         doneNotDone,
         targetName,
       });
-
       await fetchDataFromApi({
         method: "POST",
-        url: `/api/goals/targets/new`,
+        url: `/api/goals/targets/?goal_id=${goalId}`,
         body: JSON.stringify(targetDetails),
       });
 

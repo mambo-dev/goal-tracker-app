@@ -63,7 +63,7 @@ export default function GoalPage({ goal }: Props) {
       ) : (
         <EmptyState
           icon={<Target className="w-10 h-10 text-slate-600" />}
-          action={<NewTarget />}
+          action={<NewTarget goalId={goal.goal_id} />}
           title="Create Your goal targets"
           subTitle="Targets are specific and measurable pieces that must be accomplished in order to reach your Goal"
         />
