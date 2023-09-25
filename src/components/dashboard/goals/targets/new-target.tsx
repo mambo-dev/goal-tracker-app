@@ -12,6 +12,7 @@ import useError from "@/components/hooks/error";
 import { createTargetSchema } from "@/lib/schemas";
 import { Loader2 } from "lucide-react";
 import fetchDataFromApi from "@/lib/api-calls/fetchData";
+import { useRouter } from "next/navigation";
 
 type Props = {
   goalId: number;
@@ -46,7 +47,7 @@ function NewTargetForm({ goalId }: { goalId: number }) {
     endValue: 1,
   });
   const [mileStones, setMileStones] = useState<{ name: string }[]>([]);
-
+  const router = useRouter();
   const [options, setOptions] = useState<
     {
       id: Target;
@@ -117,6 +118,8 @@ function NewTargetForm({ goalId }: { goalId: number }) {
         title: "Success setting your target",
         message: "You have succesfully set your target",
       });
+
+      router.refresh()
     } catch (error) {
       handleError(error);
     } finally {

@@ -45,8 +45,8 @@ export default function CircularProgress({
           x="50%"
           y="50%"
           textAnchor="middle"
-          dy="0.3em"
-          className="font-bold text-lg text-slate-700"
+          dy="0.4em"
+          className="font-semibold text-lg text-slate-600"
         >
           {percentage}%
         </text>

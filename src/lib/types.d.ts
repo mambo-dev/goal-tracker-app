@@ -1,4 +1,11 @@
-import { Goal, GoalTarget, SubGoal, User } from "@prisma/client";
+import {
+  Goal,
+  GoalTarget,
+  SubGoal,
+  TargetTasks,
+  Type,
+  User,
+} from "@prisma/client";
 
 export type ServerResponse<T> = {
   error?: ZodIssues[] | HandleError[];
@@ -43,4 +50,18 @@ type NavList = {
   link: string;
   streak?: number;
 };
-type SingleGoal = Goal & { goal_targets: GoalTarget[] };
+type SingleGoal = Goal & {
+  goal_targets: GoalTarget[] & {
+    goal_target_tasks: TargetTasks[];
+  };
+};
+
+export type SingleGoalWithTargetsAndTasks = Goal & {
+  goal_targets: (GoalTarget & {
+    goal_target_tasks: GoalTargetTask[];
+  })[];
+};
+
+export type TargetWithTasks = GoalTarget & {
+  goal_target_tasks: GoalTargetTask[];
+};

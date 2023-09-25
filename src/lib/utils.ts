@@ -1,6 +1,6 @@
 import { Goal, Prisma, Type } from "@prisma/client";
 import { db } from "./prisma";
-import { SingleGoal } from "./types";
+import { SingleGoal, SingleGoalWithTargetsAndTasks } from "./types";
 
 export function getIdFromParams(paramName: string, url: string) {
   const { searchParams } = new URL(url);
@@ -42,14 +42,21 @@ export async function getAllGoals(userId: number): Promise<Goal[]> {
 
 export async function getSingleGoal(
   goalId: number
-): Promise<SingleGoal | null> {
+): Promise<SingleGoalWithTargetsAndTasks | null> {
   try {
     const goal = await db.goal.findUnique({
       where: {
         goal_id: goalId,
       },
       include: {
-        goal_targets: true,
+        goal_targets: {
+          orderBy: {
+            goal_target_date: "asc",
+          },
+          include: {
+            goal_target_tasks: true,
+          },
+        },
       },
     });
 

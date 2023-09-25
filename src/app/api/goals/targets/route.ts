@@ -135,11 +135,7 @@ async function createTarget(
 
   switch (targetType) {
     case "curency":
-      if (
-        !currencyTarget ||
-        !currencyTarget.startValue ||
-        !currencyTarget.endValue
-      ) {
+      if (!currencyTarget) {
         return "a currency target is required";
       }
 
@@ -160,11 +156,7 @@ async function createTarget(
       return true;
 
     case "number":
-      if (
-        !numericTarget ||
-        !numericTarget.startValue ||
-        !numericTarget.endValue
-      ) {
+      if (!numericTarget) {
         return "a numeric target is required";
       }
 
@@ -194,7 +186,7 @@ async function createTarget(
         data: {
           goal_target_name: targetName,
           goal_target_type: targetType,
-          goal_target_achieved: doneNotDone,
+          goal_target_achieved: false,
           goal_target_goal: {
             connect: {
               goal_id: goal_id,
