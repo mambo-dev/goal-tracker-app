@@ -45,7 +45,7 @@ function DisplayTargetForms({ target }: { target: TargetWithTasks }) {
     case "milestone":
       return <MileStone />;
     case "done_not_done":
-      return <DoneNotDone />;
+      return <DoneNotDone targetId={target.goal_target_id} />;
     default:
       return <div>error</div>;
   }
