@@ -70,10 +70,10 @@ export default function DoneNotDone({ targetId }: Props) {
       <button
         type="submit"
         disabled={status === "inProgress" || isLoading}
-        className=" disabled:cursor-not-allowed focus:outline-none disabled:bg-opacity-50 text-white mx-auto bg-purple-500 text-sm font-medium rounded-md py-3 px-2 inline-flex items-center justify-center w-32 "
+        className=" disabled:cursor-not-allowed focus:outline-none disabled:bg-opacity-50 text-white mx-auto bg-purple-500 text-sm font-medium rounded-md py-3 px-2 inline-flex items-center justify-center w-36 "
       >
         {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        {isLoading ? "loading..." : "submit"}
+        {isLoading ? "loading..." : "save update"}
       </button>
     </form>
   );
