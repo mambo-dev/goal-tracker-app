@@ -11,7 +11,7 @@ import { Target } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-export async function POST(
+export async function PUT(
   request: Request
 ): Promise<NextResponse<ServerResponse<boolean>>> {
   try {
@@ -61,9 +61,24 @@ export async function POST(
     const { targetType, newTarget, status } = editTargetSchema.parse(body);
 
     if (targetType === "curency" || targetType === "number") {
+      if (!newTarget) {
+        return NextResponse.json(
+          {
+            error: [
+              {
+                message: "a new target is required for this",
+              },
+            ],
+            okay: false,
+          },
+          {
+            status: 200,
+          }
+        );
+      }
       if (
-        !findGoalTarget.goal_current_value ||
-        !findGoalTarget.goal_target_value
+        typeof findGoalTarget.goal_current_value !== "number" ||
+        typeof findGoalTarget.goal_target_value !== "number"
       ) {
         throw new Error("no current or target value");
       }

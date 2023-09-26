@@ -87,6 +87,7 @@ function NumericTarget({
         <label className="text-sm text-slate-700 font-medium">Start</label>
         <input
           type="number"
+          min={0}
           value={numericTarget.startValue}
           onChange={(e) =>
             setNumericTarget({
@@ -111,6 +112,7 @@ function NumericTarget({
               endValue: Number(e.target.value),
             })
           }
+          min={0}
           className="py-1 w-full px-2 rounded-md border border-gray-300  bg-gray-50  text-sm placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:border-purple-400 hover:border-purple-500  ring-opacity-30 ring-purple-300 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:text-slate-50 dark:focus:ring-purple-300 dark:focus:ring-offset-purple-900"
         />
       </div>
@@ -143,6 +145,7 @@ function CurrencyTarget({
           </span>
           <input
             type="number"
+            min={0}
             value={currencyTarget.startValue}
             onChange={(e) =>
               setCurrencyTarget({
@@ -165,6 +168,7 @@ function CurrencyTarget({
           </span>
           <input
             type="number"
+            min={0}
             value={currencyTarget.endValue}
             onChange={(e) =>
               setCurrencyTarget({

@@ -135,7 +135,7 @@ export const editTargetSchema = z.object({
     .string({ required_error: "the name of the target must be provided" })
     .min(1, "please enter a target name")
     .optional(),
-  newTarget: z.number(),
+  newTarget: z.number().optional(),
 });
 
 export const updateTaskSchema = z.object({

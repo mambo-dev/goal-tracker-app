@@ -88,6 +88,7 @@ export default function NumericOrCurrencyTarget({ target }: Props) {
         className="h-10 mx-auto w-3/4 border-b border-gray-300 focus:border-purple-300"
         onChange={(e) => setNewTarget(e.target.value)}
         type="number"
+        min={0}
       />
 
       <button
