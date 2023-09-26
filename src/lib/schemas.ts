@@ -141,3 +141,8 @@ export const editTargetSchema = z.object({
 export const updateTaskSchema = z.object({
   taskActionType: z.enum(["check", "delete"]),
 });
+
+export const targetActionsSchema = z.object({
+  targetActionType: z.enum(["rename", "delete"]),
+  targetNewName: z.string().min(1, "a name is required").optional(),
+});

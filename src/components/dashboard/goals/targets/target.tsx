@@ -4,6 +4,7 @@ import { TargetWithTasks } from "@/lib/types";
 import { TargetTasks, GoalTarget as TargetType } from "@prisma/client";
 import React from "react";
 import UpdateTarget from "./update-target";
+import TargetActions from "./actions";
 
 type Props = {
   target: TargetWithTasks;
@@ -112,25 +113,29 @@ function DisplayProgressAndGaps({
   target: TargetWithTasks;
 }) {
   return (
-    <Modal
-      contentClassName="max-w-lg"
-      title="Update Target"
-      button={
-        <button className=" hover:bg-neutral-100 outline-none flex flex-col h-14 justify-between gap-2 text-sm py-1 px-2  w-full">
-          <div className="flex w-full items-center justify-between">
-            <p className="font-medium text-sm text-slate-800 first-letter:uppercase">
-              {name}
-            </p>
-            <span className="text-slate-700 font-medium  text-xs">
-              {current}/{total}
-            </span>
-          </div>
+    <div className="w-full flex items-center gap-2 divide-x divide-gray-300">
+      <Modal
+        contentClassName="max-w-lg"
+        title="Update Target"
+        button={
+          <button className=" hover:bg-neutral-100 outline-none flex flex-col h-14 justify-between gap-2 text-sm py-1 px-2  w-full">
+            <div className="flex w-full items-center justify-between">
+              <p className="font-medium text-sm text-slate-600 first-letter:uppercase">
+                {name}
+              </p>
 
-          <Progress value={percentageCompleted} />
-        </button>
-      }
-    >
-      <UpdateTarget target={target} />
-    </Modal>
+              <span className="text-slate-700 font-medium  text-xs">
+                {current}/{total}
+              </span>
+            </div>
+
+            <Progress value={percentageCompleted} />
+          </button>
+        }
+      >
+        <UpdateTarget target={target} />
+      </Modal>
+      <TargetActions target={target} />
+    </div>
   );
 }
