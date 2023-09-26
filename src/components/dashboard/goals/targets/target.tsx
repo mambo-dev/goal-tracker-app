@@ -17,7 +17,6 @@ function DisplayTargetProgress({ target }: { target: TargetWithTasks }) {
   let percentageCompleted: number = 0;
   switch (target.goal_target_type) {
     case "curency":
-      console.log(!target.goal_current_value);
       if (
         typeof target.goal_current_value !== "number" ||
         typeof target.goal_target_value !== "number"
@@ -50,7 +49,8 @@ function DisplayTargetProgress({ target }: { target: TargetWithTasks }) {
 
       const targetValue = target.goal_target_value;
       const currentValue = target.goal_current_value;
-      percentageCompleted = Math.floor((currentValue / targetValue) * 100);
+      percentageCompleted =
+        Math.floor((currentValue / targetValue) * 100) > 100 ? 100 : 100;
 
       return (
         <DisplayProgressAndGaps
