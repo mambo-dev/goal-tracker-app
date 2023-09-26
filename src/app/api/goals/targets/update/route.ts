@@ -88,13 +88,22 @@ export async function PUT(
           ? (findGoalTarget.goal_current_value += newTarget)
           : (findGoalTarget.goal_current_value -= newTarget);
 
+      const updatedGoal = await db.goalTarget.update({
+        where: {
+          goal_target_id: findGoalTarget.goal_target_id,
+        },
+        data: {
+          goal_current_value: newValue,
+        },
+      });
+
       await db.goalTarget.update({
         where: {
           goal_target_id: findGoalTarget.goal_target_id,
         },
         data: {
-          goal_target_achieved: newValue >= findGoalTarget.goal_target_value,
-          goal_current_value: newValue,
+          goal_target_achieved:
+            updatedGoal.goal_target_value >= updatedGoal.goal_current_value,
         },
       });
     } else if (targetType === "done_not_done") {

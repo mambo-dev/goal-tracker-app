@@ -65,12 +65,13 @@ export default function MileStone({ mileStones }: Props) {
             <div className="relative text-sm text-slate-700 font-medium">
               <span
                 className={`w-full h-full ${
-                  mileStone.target_task_done && "text-slate-600 text-opacity-50"
+                  mileStone.target_task_achieved &&
+                  "text-slate-600 text-opacity-50"
                 }`}
               >
                 {mileStone.target_task_name}
               </span>
-              {mileStone.target_task_done && (
+              {mileStone.target_task_achieved && (
                 <div className=" border-b w-full border-gray-500 absolute bottom-2 right-0 left-0" />
               )}
             </div>

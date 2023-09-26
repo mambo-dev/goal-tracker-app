@@ -59,8 +59,8 @@ model GoalTarget {
   goal_target_goal_id    Int
   goal_target_name       String
   goal_target_type       Target
-  goal_target_value      Int?          @default(0)
-  goal_current_value     Int?          @default(0)
+  goal_target_value      Int           @default(0)
+  goal_current_value     Int           @default(0)
   goal_target_achieved   Boolean?
   goal_target_date       DateTime      @default(now())
   goal_target_tasks      TargetTasks[]
