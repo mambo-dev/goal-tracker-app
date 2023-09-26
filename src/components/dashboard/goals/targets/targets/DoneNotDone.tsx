@@ -30,7 +30,7 @@ export default function DoneNotDone({ targetId }: Props) {
 
       await fetchDataFromApi({
         method: "PUT",
-        url: `/api/goals/targets/update/target_id=${targetId}`,
+        url: `/api/goals/targets/update/?target_id=${targetId}`,
         body: JSON.stringify(targetDetails),
       });
 

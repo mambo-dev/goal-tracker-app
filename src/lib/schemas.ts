@@ -136,14 +136,6 @@ export const editTargetSchema = z.object({
     .min(1, "please enter a target name")
     .optional(),
   newTarget: z.number(),
-  mileStones: z
-    .array(
-      z.object({
-        name: z.string().min(1, "please provide a name for your milestone"),
-      })
-    )
-    .optional(),
-  doneNotDone: z.boolean().optional(),
 });
 
 export const updateTaskSchema = z.object({

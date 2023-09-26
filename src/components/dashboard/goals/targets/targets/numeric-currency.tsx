@@ -39,7 +39,7 @@ export default function NumericOrCurrencyTarget({ target }: Props) {
 
       await fetchDataFromApi({
         method: "PUT",
-        url: `/api/goals/targets/update/target_id=${target.goal_target_id}`,
+        url: `/api/goals/targets/update/?target_id=${target.goal_target_id}`,
         body: JSON.stringify(targetDetails),
       });
 

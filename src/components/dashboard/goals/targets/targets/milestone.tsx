@@ -30,7 +30,7 @@ export default function MileStone({ mileStones }: Props) {
 
       await fetchDataFromApi({
         method: "PUT",
-        url: `/api/goals/targets/milestones/update/task_id=${taskUpdate.id}`,
+        url: `/api/goals/targets/milestones/update/?task_id=${taskUpdate.id}`,
         body: JSON.stringify(taskDetails),
       });
 
