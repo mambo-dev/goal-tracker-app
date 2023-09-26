@@ -9,14 +9,15 @@ import React, { useState } from "react";
 
 type Props = {
   mileStones: TargetTasks[];
+  targetId: number;
 };
 
-export default function MileStone({ mileStones }: Props) {
+export default function MileStone({ mileStones, targetId }: Props) {
   const [taskUpdate, setTaskUpdate] = useState<{
     id: number;
     loading: boolean;
     action: "check" | "delete";
-  }>({ id: mileStones[0].target_tasks_id, loading: false, action: "check" });
+  }>({ id: 0, loading: false, action: "check" });
   const router = useRouter();
   const { handleError } = useError();
 
@@ -29,7 +30,7 @@ export default function MileStone({ mileStones }: Props) {
 
       await fetchDataFromApi({
         method: "PUT",
-        url: `/api/goals/targets/milestones/?task_id=${taskUpdate.id}`,
+        url: `/api/goals/targets/milestones/?task_id=${taskUpdate.id}&target_id=${targetId}`,
         body: JSON.stringify(taskDetails),
       });
 
@@ -56,67 +57,68 @@ export default function MileStone({ mileStones }: Props) {
         completing your tasks updates this target
       </p>
       <div className="w-full grid grid-cols-1 gap-2 ">
-        {mileStones.map((mileStone, index) => (
-          <form
-            onSubmit={handleSubmit}
-            className="w-full border rounded-md border-purple-500 shadow-sm py-2 px-2 flex items-center justify-between"
-            key={index}
-          >
-            <div className="relative text-sm text-slate-700 font-medium">
-              <span
-                className={`w-full h-full ${
-                  mileStone.target_task_achieved &&
-                  "text-slate-600 text-opacity-50"
-                }`}
-              >
-                {mileStone.target_task_name}
-              </span>
-              {mileStone.target_task_achieved && (
-                <div className=" border-b w-full border-gray-500 absolute bottom-2 right-0 left-0" />
-              )}
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                type="submit"
-                onClick={() =>
-                  setTaskUpdate({
-                    action: "check",
-                    id: mileStone.target_tasks_id,
-                    loading: true,
-                  })
-                }
-                className="inline-flex items-center justify-cente r outline-none"
-              >
-                {taskUpdate.id === mileStone.target_tasks_id &&
-                taskUpdate.loading &&
-                taskUpdate.action === "check" ? (
-                  <Loader2 className="h-5 w-5 text-green-500 animate-spin" />
-                ) : (
-                  <Check className="h-5 w-5 text-green-300 hover:text-green-500" />
+        {mileStones &&
+          mileStones.map((mileStone, index) => (
+            <form
+              onSubmit={handleSubmit}
+              className="w-full border rounded-md border-purple-500 shadow-sm py-2 px-2 flex items-center justify-between"
+              key={index}
+            >
+              <div className="relative text-sm text-slate-700 font-medium">
+                <span
+                  className={`w-full h-full ${
+                    mileStone.target_task_achieved &&
+                    "text-slate-600 text-opacity-50"
+                  }`}
+                >
+                  {mileStone.target_task_name}
+                </span>
+                {mileStone.target_task_achieved && (
+                  <div className=" border-b w-full border-gray-500 absolute bottom-2 right-0 left-0" />
                 )}
-              </button>
-              <button
-                type="submit"
-                onClick={() =>
-                  setTaskUpdate({
-                    action: "delete",
-                    id: mileStone.target_tasks_id,
-                    loading: true,
-                  })
-                }
-                className="outline-none w-fit h-fit "
-              >
-                {taskUpdate.id === mileStone.target_tasks_id &&
-                taskUpdate.loading &&
-                taskUpdate.action === "delete" ? (
-                  <Loader2 className="h-4 w-4 text-red-500 animate-spin" />
-                ) : (
-                  <X className="h-4 w-4 text-red-400 hover:text-red-500" />
-                )}
-              </button>
-            </div>
-          </form>
-        ))}
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="submit"
+                  onClick={() =>
+                    setTaskUpdate({
+                      action: "check",
+                      id: mileStone.target_tasks_id,
+                      loading: true,
+                    })
+                  }
+                  className="inline-flex items-center justify-cente r outline-none"
+                >
+                  {taskUpdate.id === mileStone.target_tasks_id &&
+                  taskUpdate.loading &&
+                  taskUpdate.action === "check" ? (
+                    <Loader2 className="h-5 w-5 text-green-500 animate-spin" />
+                  ) : (
+                    <Check className="h-5 w-5 text-green-300 hover:text-green-500" />
+                  )}
+                </button>
+                <button
+                  type="submit"
+                  onClick={() =>
+                    setTaskUpdate({
+                      action: "delete",
+                      id: mileStone.target_tasks_id,
+                      loading: true,
+                    })
+                  }
+                  className="outline-none w-fit h-fit "
+                >
+                  {taskUpdate.id === mileStone.target_tasks_id &&
+                  taskUpdate.loading &&
+                  taskUpdate.action === "delete" ? (
+                    <Loader2 className="h-4 w-4 text-red-500 animate-spin" />
+                  ) : (
+                    <X className="h-4 w-4 text-red-400 hover:text-red-500" />
+                  )}
+                </button>
+              </div>
+            </form>
+          ))}
       </div>
     </div>
   );

@@ -41,7 +41,12 @@ function DisplayTargetForms({ target }: { target: TargetWithTasks }) {
     case "curency":
       return <NumericOrCurrencyTarget target={target} />;
     case "milestone":
-      return <MileStone mileStones={target.goal_target_tasks} />;
+      return (
+        <MileStone
+          mileStones={target.goal_target_tasks}
+          targetId={target.goal_target_id}
+        />
+      );
     case "done_not_done":
       return <DoneNotDone targetId={target.goal_target_id} />;
     default:
