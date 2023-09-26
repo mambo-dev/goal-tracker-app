@@ -1,36 +1,45 @@
-import Button from "@/components/ui/button";
 import React, { useState } from "react";
 import ToggleButtons from "./toggle-buttons";
+import { Loader2 } from "lucide-react";
 import useError from "@/components/hooks/error";
+import { useRouter } from "next/navigation";
+import { Target } from "@prisma/client";
+import { editTargetSchema } from "@/lib/schemas";
+import { TargetWithTasks } from "@/lib/types";
 import fetchDataFromApi from "@/lib/api-calls/fetchData";
 import { toast } from "@/components/ui/toast";
-import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
-import { editTargetSchema } from "@/lib/schemas";
-import { Target } from "@prisma/client";
+import { Input } from "@/components/ui/input";
 
 type Props = {
-  targetId: number;
+  target: TargetWithTasks;
 };
 
-export default function DoneNotDone({ targetId }: Props) {
-  const [status, setStatus] = useState<"finished" | "inProgress">("inProgress");
+export default function NumericOrCurrencyTarget({ target }: Props) {
+  const [status, setStatus] = useState<"increase" | "decrease">("increase");
   const [isLoading, setIsLoading] = useState(false);
+  const [newTarget, setNewTarget] = useState("");
   const { handleError } = useError();
   const router = useRouter();
-  const targetType: Target = "done_not_done";
+  const targetType: Target = target.goal_target_type;
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setIsLoading(true);
     try {
+      if (targetType === "done_not_done" || targetType === "milestone") {
+        return toast({
+          message: "currency or numeric target only required",
+        });
+      }
+
       const targetDetails = editTargetSchema.parse({
         status,
-        targetType: targetType,
+        targetType,
+        newTarget: Number(newTarget),
       });
 
       await fetchDataFromApi({
         method: "PUT",
-        url: `/api/goals/targets/update/target_id=${targetId}`,
+        url: `/api/goals/targets/update/target_id=${target.goal_target_id}`,
         body: JSON.stringify(targetDetails),
       });
 
@@ -55,28 +64,35 @@ export default function DoneNotDone({ targetId }: Props) {
       <ToggleButtons
         action={() =>
           setStatus((prevState) => {
-            if (prevState === "inProgress") {
-              return "finished";
+            if (prevState === "increase") {
+              return "decrease";
             } else {
-              return "inProgress";
+              return "increase";
             }
           })
         }
         options={{
           a: {
-            value: "in progress",
-            active: status === "inProgress",
+            value: "decrease",
+            active: status === "decrease",
           },
           b: {
-            value: "finished",
-            active: status === "finished",
+            value: "increase",
+            active: status === "increase",
           },
         }}
       />
 
+      <Input
+        value={newTarget}
+        className="h-10 mx-auto w-3/4 border-b border-gray-300 focus:border-purple-300"
+        onChange={(e) => setNewTarget(e.target.value)}
+        type="number"
+      />
+
       <button
         type="submit"
-        disabled={status === "inProgress" || isLoading}
+        disabled={isLoading}
         className=" disabled:cursor-not-allowed focus:outline-none disabled:bg-opacity-50 text-white mx-auto bg-purple-500 text-sm font-medium rounded-md py-3 px-2 inline-flex items-center justify-center w-36 "
       >
         {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

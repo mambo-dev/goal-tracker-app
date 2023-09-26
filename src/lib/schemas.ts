@@ -125,3 +125,28 @@ export const createTargetSchema = z.object({
     .optional(),
   doneNotDone: z.boolean().optional(),
 });
+
+export const editTargetSchema = z.object({
+  targetType: z.enum(["number", "curency", "milestone", "done_not_done"], {
+    required_error: "a target type must be provided",
+  }),
+  status: z.enum(["finished", "inProgress", "increase", "decrease"]).optional(),
+  targetName: z
+    .string({ required_error: "the name of the target must be provided" })
+    .min(1, "please enter a target name")
+    .optional(),
+  newTarget: z.number(),
+  mileStones: z
+    .array(
+      z.object({
+        name: z.string().min(1, "please provide a name for your milestone"),
+      })
+    )
+    .optional(),
+  doneNotDone: z.boolean().optional(),
+});
+
+export const updateTaskSchema = z.object({
+  taskCompleted: z.boolean().default(false),
+  taskActionType: z.enum(["check", "delete"]),
+});

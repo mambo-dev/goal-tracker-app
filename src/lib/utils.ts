@@ -115,7 +115,7 @@ export function getPercentageValue(target: TargetWithTasks) {
       ).length;
       const totalTasks = target.goal_target_tasks.length;
       percentageCompleted = Math.floor((tasksCompleted / totalTasks) * 100);
-
+      console.log(tasksCompleted, totalTasks);
       return {
         percentageCompleted,
         targetValue,

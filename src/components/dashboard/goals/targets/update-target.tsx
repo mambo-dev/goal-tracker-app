@@ -1,12 +1,10 @@
 import { Progress } from "@/components/ui/progress";
 import { TargetWithTasks } from "@/lib/types";
 import { getPercentageValue } from "@/lib/utils";
-import { Target } from "@prisma/client";
 import React from "react";
-import Number from "./targets/number";
-import Currency from "./targets/currency";
 import DoneNotDone from "./targets/DoneNotDone";
 import MileStone from "./targets/milestone";
+import NumericOrCurrencyTarget from "./targets/numeric-currency";
 
 type Props = {
   target: TargetWithTasks;
@@ -39,11 +37,11 @@ export default function UpdateTarget({ target }: Props) {
 function DisplayTargetForms({ target }: { target: TargetWithTasks }) {
   switch (target.goal_target_type) {
     case "number":
-      return <Number />;
+      return <NumericOrCurrencyTarget target={target} />;
     case "curency":
-      return <Currency />;
+      return <NumericOrCurrencyTarget target={target} />;
     case "milestone":
-      return <MileStone />;
+      return <MileStone mileStones={target.goal_target_tasks} />;
     case "done_not_done":
       return <DoneNotDone targetId={target.goal_target_id} />;
     default:
