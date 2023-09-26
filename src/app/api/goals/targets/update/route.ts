@@ -103,7 +103,7 @@ export async function PUT(
         },
         data: {
           goal_target_achieved:
-            updatedGoal.goal_current_value >= updatedGoal.goal_current_value,
+            updatedGoal.goal_current_value >= updatedGoal.goal_target_value,
         },
       });
     } else if (targetType === "done_not_done") {
