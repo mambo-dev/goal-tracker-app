@@ -50,7 +50,9 @@ function DisplayTargetProgress({ target }: { target: TargetWithTasks }) {
       const targetValue = target.goal_target_value;
       const currentValue = target.goal_current_value;
       percentageCompleted =
-        Math.floor((currentValue / targetValue) * 100) > 100 ? 100 : 100;
+        Math.floor((currentValue / targetValue) * 100) > 100
+          ? 100
+          : Math.floor((currentValue / targetValue) * 100);
 
       return (
         <DisplayProgressAndGaps
