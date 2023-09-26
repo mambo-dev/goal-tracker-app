@@ -24,13 +24,12 @@ export default function MileStone({ mileStones }: Props) {
     e.preventDefault();
     try {
       const taskDetails = updateTaskSchema.parse({
-        taskCompleted: taskUpdate.action === "check",
         taskActionType: taskUpdate.action,
       });
 
       await fetchDataFromApi({
         method: "PUT",
-        url: `/api/goals/targets/milestones/update/?task_id=${taskUpdate.id}`,
+        url: `/api/goals/targets/milestones/?task_id=${taskUpdate.id}`,
         body: JSON.stringify(taskDetails),
       });
 

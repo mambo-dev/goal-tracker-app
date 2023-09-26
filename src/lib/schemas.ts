@@ -139,6 +139,5 @@ export const editTargetSchema = z.object({
 });
 
 export const updateTaskSchema = z.object({
-  taskCompleted: z.boolean().default(false),
   taskActionType: z.enum(["check", "delete"]),
 });
