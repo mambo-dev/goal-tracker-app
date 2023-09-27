@@ -114,7 +114,9 @@ export function getGoalProgress(goal: SingleGoalWithTargetsAndTasks) {
     totalTargets > 0 ? (achievedTargets / totalTargets) * 100 : 0;
 
   const overallProgress =
-    (overallTotalTargets + overallTasks + overallTargets) / 3;
+    overallTasks === 0
+      ? (overallTotalTargets + overallTasks + overallTargets) / 2
+      : (overallTotalTargets + overallTasks + overallTargets) / 3;
 
   return Math.floor(overallProgress);
 }
