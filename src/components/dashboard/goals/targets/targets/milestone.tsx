@@ -80,6 +80,7 @@ export default function MileStone({ mileStones, targetId }: Props) {
               <div className="flex items-center gap-2">
                 <button
                   type="submit"
+                  disabled={mileStone.target_task_achieved}
                   onClick={() =>
                     setTaskUpdate({
                       action: "check",
@@ -87,14 +88,14 @@ export default function MileStone({ mileStones, targetId }: Props) {
                       loading: true,
                     })
                   }
-                  className="inline-flex items-center justify-cente r outline-none"
+                  className="inline-flex items-center justify-center group outline-none"
                 >
                   {taskUpdate.id === mileStone.target_tasks_id &&
                   taskUpdate.loading &&
                   taskUpdate.action === "check" ? (
                     <Loader2 className="h-5 w-5 text-green-500 animate-spin" />
                   ) : (
-                    <Check className="h-5 w-5 text-green-300 hover:text-green-500" />
+                    <Check className="h-5 w-5 text-green-300 hover:text-green-500  group-disabled:text-green-300" />
                   )}
                 </button>
                 <button

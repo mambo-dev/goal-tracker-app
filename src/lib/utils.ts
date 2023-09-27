@@ -106,17 +106,37 @@ export function getGoalProgress(goal: SingleGoalWithTargetsAndTasks) {
     return total + target.goal_target_value;
   }, 0);
 
-  // Calculate the overall progress of targets as a percentage
   const overallTargets =
     totalTargetValue > 0 ? (totalCurrentValue / totalTargetValue) * 100 : 0;
 
   const overallTotalTargets =
     totalTargets > 0 ? (achievedTargets / totalTargets) * 100 : 0;
+  const taskWeight = 0.4;
+  const targetWeight = 0.4;
+  const achievedTargetWeight = 0.2;
+  const noTargets =
+    overallTasks <= 0 && overallTargets <= 0 && overallTotalTargets <= 0;
 
+  const weightedTaskProgress =
+    overallTasks <= 0 ? (noTargets ? 0 : 40) : overallTasks * taskWeight;
+  const weightedTargetProgress =
+    overallTargets <= 0 ? (noTargets ? 0 : 40) : overallTargets * targetWeight;
+  const weightedAchievedTargetProgress =
+    overallTotalTargets <= 0
+      ? noTargets
+        ? 0
+        : 40
+      : overallTotalTargets * achievedTargetWeight;
+  console.log(
+    weightedTaskProgress,
+    weightedTargetProgress,
+    weightedAchievedTargetProgress,
+    overallTasks
+  );
   const overallProgress =
-    overallTasks === 0
-      ? (overallTotalTargets + overallTasks + overallTargets) / 2
-      : (overallTotalTargets + overallTasks + overallTargets) / 3;
+    weightedTaskProgress +
+    weightedTargetProgress +
+    weightedAchievedTargetProgress;
 
   return Math.floor(overallProgress);
 }
