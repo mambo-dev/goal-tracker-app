@@ -16,13 +16,7 @@ type Props = {
 };
 
 export default function GoalPage({ goal }: Props) {
-  const achievedTargets = goal.goal_targets.filter(
-    (target) => target.goal_target_achieved
-  ).length;
-
-  const totalTargets = goal.goal_targets.length;
-
-  const progress = getGoalProgress(totalTargets, achievedTargets);
+  const progress = getGoalProgress(goal);
   return (
     <div className="max-w-2xl flex flex-col gap-3  mn-h-screen mx-auto mt-10  ">
       <div className="w-full border border-gray-300 shadow py-2 px-2 rounded-md">

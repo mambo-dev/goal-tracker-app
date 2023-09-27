@@ -75,11 +75,48 @@ export function truncate(str: string, maxLength: number) {
   return str.substring(0, maxLength - 3) + "...";
 }
 
-export function getGoalProgress(totalTargets: number, totalAchieved: number) {
-  if (totalAchieved <= 0 || totalTargets <= 0) {
-    return 0;
-  }
-  return Math.floor((totalAchieved / totalTargets) * 100);
+export function getGoalProgress(goal: SingleGoalWithTargetsAndTasks) {
+  const totalTargets = goal.goal_targets.length;
+  const achievedTargets = goal.goal_targets.filter(
+    (target) => target.goal_target_achieved
+  ).length;
+
+  // Calculate the progress of all tasks across all targets
+  const totalTasks = goal.goal_targets.reduce((total, target) => {
+    return total + target.goal_target_tasks.length;
+  }, 0);
+
+  const achievedTasks = goal.goal_targets.reduce((total, target) => {
+    return (
+      total +
+      target.goal_target_tasks.filter((task) => task.target_task_achieved)
+        .length
+    );
+  }, 0);
+
+  // Calculate the overall progress of tasks as a percentage
+
+  const overallTasks = totalTasks > 0 ? (achievedTasks / totalTasks) * 100 : 0;
+
+  const totalCurrentValue = goal.goal_targets.reduce((total, target) => {
+    return total + target.goal_current_value;
+  }, 0);
+
+  const totalTargetValue = goal.goal_targets.reduce((total, target) => {
+    return total + target.goal_target_value;
+  }, 0);
+
+  // Calculate the overall progress of targets as a percentage
+  const overallTargets =
+    totalTargetValue > 0 ? (totalCurrentValue / totalTargetValue) * 100 : 0;
+
+  const overallTotalTargets =
+    totalTargets > 0 ? (achievedTargets / totalTargets) * 100 : 0;
+
+  const overallProgress =
+    (overallTotalTargets + overallTasks + overallTargets) / 3;
+
+  return Math.floor(overallProgress);
 }
 
 export function getPercentageValue(target: TargetWithTasks) {
