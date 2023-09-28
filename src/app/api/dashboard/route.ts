@@ -99,6 +99,8 @@ export async function GET(request: Request): Promise<
       },
     });
 
+    //graph data is all a targets vs dates achieved
+
     return NextResponse.json(
       {
         data: {

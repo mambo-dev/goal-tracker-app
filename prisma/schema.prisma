@@ -99,7 +99,9 @@ model AnalyticsTracker {
   analytics_user              User     @relation(fields: [analytics_user_id], references: [user_id], onDelete: Cascade)
   analytics_user_id           Int      @unique
   analytics_goals_achieved    Int      @default(0)
+  analytics_goals_created     Int      @default(0)
   analytics_targets_completed Int      @default(0)
+  analytics_targets_created   Int      @default(0)
   analytics_longest_streak    Int      @default(0)
   analytics_streaks           Streak[]
 }
