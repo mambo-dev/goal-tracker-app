@@ -3,12 +3,13 @@ import AddGoal from "./goals/add-goal";
 import ProfileMenu from "./profile-menu";
 import { NavList, UserAndAccount } from "@/lib/types";
 import Link from "next/link";
+import { getUserStreak } from "@/lib/utils";
 
 type Props = {
   user: UserAndAccount;
 };
 
-export default function DashboardMainNav({ user }: Props) {
+export default async function DashboardMainNav({ user }: Props) {
   const navList: NavList[] = [
     {
       name: "Overview",
@@ -17,7 +18,7 @@ export default function DashboardMainNav({ user }: Props) {
     {
       name: "Goals",
       link: "/goals",
-      streak: 90,
+      streak: await getUserStreak(user.user_id),
     },
   ];
 

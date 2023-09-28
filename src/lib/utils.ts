@@ -260,3 +260,26 @@ export async function updateOrCreateStreak(user_id: number) {
     throw new Error("failed to update streak");
   }
 }
+
+export async function getUserStreak(user_id: number) {
+  try {
+    const streak = await db.streak.findFirst({
+      where: {
+        AND: {
+          streak_analytics: {
+            analytics_user_id: user_id,
+          },
+          streak_endtime: undefined,
+        },
+      },
+    });
+
+    if (!streak) {
+      return 0;
+    }
+
+    return streak.streak_current_count;
+  } catch (error) {
+    throw new Error("could not update streak");
+  }
+}
