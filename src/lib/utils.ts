@@ -317,3 +317,29 @@ export class AnalyticsCreationError extends Error {
     this.message = "failed to create analytics during signup";
   }
 }
+
+export async function updateTargetAnalytics(user_id: number) {
+  try {
+    const findUserAnalytics = await db.analyticsTracker.findUnique({
+      where: {
+        analytics_user_id: user_id,
+      },
+    });
+
+    if (!findUserAnalytics) {
+      throw new AnalyticsCreationError();
+    }
+
+    await db.analyticsTracker.update({
+      where: {
+        analytics_user_id: user_id,
+      },
+      data: {
+        analytics_targets_created:
+          (findUserAnalytics.analytics_goals_created += 1),
+      },
+    });
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+}

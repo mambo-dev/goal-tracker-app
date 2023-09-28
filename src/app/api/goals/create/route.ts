@@ -6,6 +6,7 @@ import { addDays, addMonths, addWeeks, addYears } from "date-fns";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { assignTimeline } from "../validatetype";
+import { AnalyticsCreationError } from "@/lib/utils";
 
 export async function POST(
   request: Request
@@ -42,6 +43,26 @@ export async function POST(
             user_id: user.user_id,
           },
         },
+      },
+    });
+
+    const findUserAnalytics = await db.analyticsTracker.findUnique({
+      where: {
+        analytics_user_id: user.user_id,
+      },
+    });
+
+    if (!findUserAnalytics) {
+      throw new AnalyticsCreationError();
+    }
+
+    await db.analyticsTracker.update({
+      where: {
+        analytics_user_id: user.user_id,
+      },
+      data: {
+        analytics_goals_created:
+          (findUserAnalytics.analytics_goals_created += 1),
       },
     });
 

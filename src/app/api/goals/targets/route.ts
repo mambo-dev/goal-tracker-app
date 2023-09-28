@@ -2,7 +2,11 @@ import { userExistsAndAuthorized } from "@/lib/auth";
 import { db } from "@/lib/prisma";
 import { createTargetSchema } from "@/lib/schemas";
 import { ServerResponse } from "@/lib/types";
-import { getIdFromParams } from "@/lib/utils";
+import {
+  AnalyticsCreationError,
+  getIdFromParams,
+  updateTargetAnalytics,
+} from "@/lib/utils";
 import { Target } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -66,6 +70,8 @@ export async function POST(
         }
       );
     }
+
+    await updateTargetAnalytics(user.user_id);
 
     return NextResponse.json(
       {
@@ -222,6 +228,7 @@ async function createTarget(
           },
         },
       });
+
       return true;
 
     default:
