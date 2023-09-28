@@ -43,6 +43,7 @@ model Goal {
   goal_sub_goal_id Int?
   goal_sub_goals   Goal[]       @relation("GoalSubGoals")
   goal_targets     GoalTarget[]
+  goal_created_at  DateTime?    @default(now())
 }
 
 enum Target {

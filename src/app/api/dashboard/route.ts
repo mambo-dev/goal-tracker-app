@@ -2,7 +2,7 @@ import { userExistsAndAuthorized } from "@/lib/auth";
 import { db } from "@/lib/prisma";
 import { ServerResponse } from "@/lib/types";
 import { AnalyticsCreationError } from "@/lib/utils";
-import { AnalyticsTracker } from "@prisma/client";
+import { AnalyticsTracker, Goal } from "@prisma/client";
 import { intervalToDuration } from "date-fns";
 import { NextResponse } from "next/server";
 
@@ -14,6 +14,7 @@ export async function GET(request: Request): Promise<
       totalActiveTargets: number;
       percentageCompletedGoals: number;
       percentageCompletedTasks: number;
+      recentGoals: Goal[];
     }>
   >
 > {
@@ -101,6 +102,13 @@ export async function GET(request: Request): Promise<
       },
     });
 
+    const recentGoals = await db.goal.findMany({
+      take: 5,
+      orderBy: {
+        goal_created_at: "asc",
+      },
+    });
+
     //graph data is all a targets vs dates achieved
 
     return NextResponse.json(
@@ -119,6 +127,7 @@ export async function GET(request: Request): Promise<
               updatedAnalytics.analytics_targets_created) *
               100
           ),
+          recentGoals,
         },
 
         okay: true,
