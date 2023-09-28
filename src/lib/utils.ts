@@ -310,3 +310,10 @@ export async function getUserStreak(user_id: number) {
     throw new Error("could not update streak");
   }
 }
+
+export class AnalyticsCreationError extends Error {
+  constructor() {
+    super();
+    this.message = "failed to create analytics during signup";
+  }
+}

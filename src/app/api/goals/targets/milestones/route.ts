@@ -78,14 +78,16 @@ export async function PUT(
         throw new Error("did not find the target");
       }
 
+      const allTasksAchieved = findGoalTarget.goal_target_tasks.every(
+        (task) => task.target_task_achieved
+      );
       const targetAchieved = await db.goalTarget.update({
         where: {
           goal_target_id: target_id,
         },
         data: {
-          goal_target_achieved: findGoalTarget.goal_target_tasks.every(
-            (task) => task.target_task_achieved
-          ),
+          goal_target_achieved: allTasksAchieved,
+          goal_target_achieved_at: allTasksAchieved ? new Date() : null,
         },
       });
 
