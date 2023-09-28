@@ -2,7 +2,7 @@ import { userExistsAndAuthorized } from "@/lib/auth";
 import { db } from "@/lib/prisma";
 import { updateTaskSchema } from "@/lib/schemas";
 import { ServerResponse } from "@/lib/types";
-import { getIdFromParams } from "@/lib/utils";
+import { getIdFromParams, updateOrCreateStreak } from "@/lib/utils";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -78,7 +78,7 @@ export async function PUT(
         throw new Error("did not find the target");
       }
 
-      await db.goalTarget.update({
+      const targetAchieved = await db.goalTarget.update({
         where: {
           goal_target_id: target_id,
         },
@@ -88,6 +88,10 @@ export async function PUT(
           ),
         },
       });
+
+      if (targetAchieved.goal_target_achieved) {
+        await updateOrCreateStreak(user.user_id);
+      }
     } else {
       await db.targetTasks.delete({
         where: {

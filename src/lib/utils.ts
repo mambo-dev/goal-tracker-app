@@ -5,6 +5,7 @@ import {
   SingleGoalWithTargetsAndTasks,
   TargetWithTasks,
 } from "./types";
+import { isWithinInterval, sub } from "date-fns";
 
 export function getIdFromParams(paramName: string, url: string) {
   const { searchParams } = new URL(url);
@@ -190,5 +191,72 @@ export function getPercentageValue(target: TargetWithTasks) {
         targetValue,
         currentValue,
       };
+  }
+}
+
+export async function updateOrCreateStreak(user_id: number) {
+  try {
+    // if streak does not have end time then its still running else the streak is closed and user does not have streak
+
+    const userHasExistingStreak = await db.streak.findFirst({
+      where: {
+        AND: {
+          streak_analytics: {
+            analytics_user_id: user_id,
+          },
+          streak_endtime: undefined,
+        },
+      },
+    });
+
+    if (userHasExistingStreak) {
+      const isWithin24hours = isWithinInterval(
+        userHasExistingStreak.streak_updated_at,
+        {
+          start: sub(new Date(), { days: 1 }),
+          end: new Date(),
+        }
+      );
+
+      if (isWithin24hours) {
+        //continue streak
+        await db.streak.update({
+          where: {
+            streak_id: userHasExistingStreak.streak_id,
+          },
+          data: {
+            streak_current_count:
+              (userHasExistingStreak.streak_current_count += 1),
+          },
+        });
+      } else {
+        //end streak
+        await db.streak.update({
+          where: {
+            streak_id: userHasExistingStreak.streak_id,
+          },
+          data: {
+            streak_endtime: new Date(),
+          },
+        });
+      }
+    } else {
+      await db.streak.create({
+        data: {
+          streak_starttime: new Date(),
+          streak_type: "daily",
+          streak_current_count: 1,
+          streak_analytics: {
+            connect: {
+              analytics_user_id: user_id,
+            },
+          },
+        },
+      });
+    }
+
+    return true;
+  } catch (error) {
+    throw new Error("failed to update streak");
   }
 }

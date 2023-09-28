@@ -11,14 +11,13 @@ datasource db {
 }
 
 model User {
-  user_id        Int                @id @default(autoincrement())
-  user_username  String             @unique
-  user_email     String             @unique
+  user_id        Int               @id @default(autoincrement())
+  user_username  String            @unique
+  user_email     String            @unique
   user_password  String
   user_account   Account?
   user_goals     Goal[]
-  user_streaks   Streak[]
-  user_analytics AnalyticsTracker[]
+  user_analytics AnalyticsTracker?
 }
 
 model Account {
@@ -84,16 +83,14 @@ enum Type {
 }
 
 model Streak {
-  streak_id            Int               @id @default(autoincrement())
-  streak_current_count Int               @default(0)
+  streak_id            Int              @id @default(autoincrement())
+  streak_current_count Int              @default(0)
   streak_type          Type
   streak_starttime     DateTime
   streak_endtime       DateTime?
-  streak_user          User              @relation(fields: [streak_user_id], references: [user_id], onDelete: Cascade)
-  streak_user_id       Int
-  streak_updated_at    DateTime          @default(now()) @updatedAt
-  streak_analytics     AnalyticsTracker? @relation(fields: [streak_analytics_id], references: [analytics_id], onDelete: Cascade)
-  streak_analytics_id  Int?
+  streak_updated_at    DateTime         @default(now()) @updatedAt
+  streak_analytics     AnalyticsTracker @relation(fields: [streak_analytics_id], references: [analytics_id], onDelete: Cascade)
+  streak_analytics_id  Int
 }
 
 model AnalyticsTracker {

@@ -6,7 +6,7 @@ import {
   updateTaskSchema,
 } from "@/lib/schemas";
 import { ServerResponse } from "@/lib/types";
-import { getIdFromParams } from "@/lib/utils";
+import { getIdFromParams, updateOrCreateStreak } from "@/lib/utils";
 import { Target } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -97,7 +97,7 @@ export async function PUT(
         },
       });
 
-      await db.goalTarget.update({
+      const targetAchieved = await db.goalTarget.update({
         where: {
           goal_target_id: findGoalTarget.goal_target_id,
         },
@@ -106,6 +106,10 @@ export async function PUT(
             updatedGoal.goal_current_value >= updatedGoal.goal_target_value,
         },
       });
+
+      if (targetAchieved.goal_target_achieved) {
+        await updateOrCreateStreak(user.user_id);
+      }
     } else if (targetType === "done_not_done") {
       await db.goalTarget.update({
         where: {
@@ -115,6 +119,8 @@ export async function PUT(
           goal_target_achieved: true,
         },
       });
+
+      await updateOrCreateStreak(user.user_id);
     }
 
     return NextResponse.json(
