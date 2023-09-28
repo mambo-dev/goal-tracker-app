@@ -5,7 +5,7 @@ import {
   SingleGoalWithTargetsAndTasks,
   TargetWithTasks,
 } from "./types";
-import { isWithinInterval, sub } from "date-fns";
+import { isToday, isWithinInterval, sub } from "date-fns";
 
 export function getIdFromParams(paramName: string, url: string) {
   const { searchParams } = new URL(url);
@@ -196,13 +196,33 @@ export function getPercentageValue(target: TargetWithTasks) {
 
 export async function updateOrCreateStreak(user_id: number) {
   try {
+    //update analytics to cater for the achieved target
+    const findUserAnalytics = await db.analyticsTracker.findUnique({
+      where: {
+        analytics_user_id: user_id,
+      },
+    });
+
+    if (!findUserAnalytics) {
+      throw new Error("failed to create analytics on log in");
+    }
+
+    await db.analyticsTracker.update({
+      where: {
+        analytics_user_id: user_id,
+      },
+      data: {
+        analytics_targets_completed:
+          (findUserAnalytics.analytics_targets_completed += 1),
+      },
+    });
     // if streak does not have end time then its still running else the streak is closed and user does not have streak
 
     const userHasExistingStreak = await db.streak.findFirst({
       where: {
         AND: {
           streak_analytics: {
-            analytics_user_id: user_id,
+            analytics_id: findUserAnalytics.analytics_id,
           },
           streak_endtime: undefined,
         },
@@ -220,6 +240,13 @@ export async function updateOrCreateStreak(user_id: number) {
 
       if (isWithin24hours) {
         //continue streak
+        //is the streak already updated today
+        const isUpdatedToday = isToday(userHasExistingStreak.streak_updated_at);
+
+        if (isUpdatedToday) {
+          return true;
+        }
+
         await db.streak.update({
           where: {
             streak_id: userHasExistingStreak.streak_id,
@@ -248,7 +275,7 @@ export async function updateOrCreateStreak(user_id: number) {
           streak_current_count: 1,
           streak_analytics: {
             connect: {
-              analytics_user_id: user_id,
+              analytics_id: findUserAnalytics.analytics_id,
             },
           },
         },
