@@ -12,6 +12,8 @@ export async function GET(request: Request): Promise<
       analytics: AnalyticsTracker;
       totalActiveGoals: number;
       totalActiveTargets: number;
+      percentageCompletedGoals: number;
+      percentageCompletedTasks: number;
     }>
   >
 > {
@@ -107,7 +109,18 @@ export async function GET(request: Request): Promise<
           analytics: updatedAnalytics,
           totalActiveGoals: totalActiveGoals.length,
           totalActiveTargets: totalActiveTargets.length,
+          percentageCompletedGoals: Math.floor(
+            (updatedAnalytics.analytics_goals_achieved /
+              updatedAnalytics.analytics_goals_created) *
+              100
+          ),
+          percentageCompletedTasks: Math.floor(
+            (updatedAnalytics.analytics_targets_completed /
+              updatedAnalytics.analytics_targets_created) *
+              100
+          ),
         },
+
         okay: true,
       },
       {
