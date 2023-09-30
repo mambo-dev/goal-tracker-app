@@ -14,7 +14,7 @@ export default async function Dashboard({}: Props) {
     <div className="min-h-screen flex flex-col py-4 gap-6">
       <div className="w-full grid grid-cols-9  gap-6 md:h-[200px]">
         <Display
-          className=" col-span-3 bg-white shadow rounded-md border border-gray-300 py-2 px-2  h-full flex items-start justify-start relative"
+          className="bg-purple-100 bg-opacity-20 col-span-3 shadow rounded-md border border-gray-300 py-2 px-2  h-full flex items-start justify-start relative"
           title={
             hour < 12
               ? `Good morning ${user?.user_username}`

@@ -3,6 +3,28 @@ import React from "react";
 type Props = {};
 
 export default function DashboardStats({}: Props) {
+  const stats = [
+    {
+      title: "Active goals",
+      icon: "",
+      value: 0,
+    },
+    {
+      title: "Active targets",
+      icon: "",
+      value: 0,
+    },
+    {
+      title: "Goals completed",
+      icon: "",
+      value: 0,
+    },
+    {
+      title: "targets completed",
+      icon: "",
+      value: 0,
+    },
+  ];
   return (
     <div className=" col-span-6 w-full bg-white shadow rounded-md border border-gray-300 py-2 px-2  h-full flex items-start justify-start relative">
       <div className="w-fit mr-auto flex flex-col space-y-1.5 text-center sm:text-left ">
@@ -14,6 +36,7 @@ export default function DashboardStats({}: Props) {
           here as well as your percentage of achievement
         </p>
       </div>
+      <div className="mb-0 "></div>
     </div>
   );
 }
